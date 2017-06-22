@@ -1,0 +1,3 @@
+2017-06-22 Version 0.2.1:
+    * Change handling of singular subsets. If a subset (obtained by removing observations based
+      on a PSC and ordering) is singular, this subset is skipped instead of raising an error.
