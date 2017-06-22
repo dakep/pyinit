@@ -200,8 +200,13 @@ static int computeInitialEstimator(const double *restrict Xtr, const double *res
 
             /* 4.2. Estimate coefficients */
             currentEst += nvar;
-            linalgError = computeOLSCoefs(filteredXtr, filteredY, filteredNobs, nvar, currentEst,
-                                          auxmem.Xsqrt);
+            if (filteredNobs > 0) {
+                linalgError = computeOLSCoefs(filteredXtr, filteredY, filteredNobs, nvar, currentEst,
+                                              auxmem.Xsqrt);
+            } else {
+                linalgError = 1;
+            }
+
             if (linalgError != 0) {
                 linalgError = 0;
                 memset(currentEst, 0, nvar * sizeof(double));
@@ -229,8 +234,13 @@ static int computeInitialEstimator(const double *restrict Xtr, const double *res
 
             /* 4.2. Estimate coefficients */
             currentEst += nvar;
-            linalgError = computeOLSCoefs(filteredXtr, filteredY, filteredNobs, nvar, currentEst,
-                                          auxmem.Xsqrt);
+            if (filteredNobs > 0) {
+                linalgError = computeOLSCoefs(filteredXtr, filteredY, filteredNobs, nvar, currentEst,
+                                              auxmem.Xsqrt);
+            } else {
+                linalgError = 1;
+            }
+
             if (linalgError != 0) {
                 linalgError = 0;
                 memset(currentEst, 0, nvar * sizeof(double));
@@ -259,9 +269,13 @@ static int computeInitialEstimator(const double *restrict Xtr, const double *res
 
             /* 4.2. Estimate coefficients */
             currentEst += nvar;
+            if (filteredNobs > 0) {
+                linalgError = computeOLSCoefs(filteredXtr, filteredY, filteredNobs, nvar, currentEst,
+                                              auxmem.Xsqrt);
+            } else {
+                linalgError = 1;
+            }
 
-            linalgError = computeOLSCoefs(filteredXtr, filteredY, filteredNobs, nvar, currentEst,
-                                          auxmem.Xsqrt);
             if (linalgError != 0) {
                 linalgError = 0;
                 memset(currentEst, 0, nvar * sizeof(double));
