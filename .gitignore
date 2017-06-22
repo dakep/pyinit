@@ -1,0 +1,11 @@
+builds
+Makevars.dbg
+*.o
+*.so
+config.log
+config.status
+build
+bundle
+autoconfig.h
+*.Rproj
+Makevars
