@@ -97,6 +97,9 @@ F77_NAME(dtrsm)(const char *side, const char *uplo,
 #define BLAS_DTRSM(side, uplo, transa, diag, m, n, alpha, a, lda, b, ldb)                       \
     BLAS_R_NAME(dtrsm)(side, uplo, transa, diag, &m, &n, &alpha, a, &lda, b, &ldb)
 
+#define BLAS_DTRMV(uplo, trans, diag, n, a, lda, x, incx)                                       \
+    BLAS_R_NAME(dtrmv)(uplo, trans, diag, &n, a, &lda, x, &incx)
+
 
 #define LAPACK_DPOTRF(uplo, n, a, lda, info)                                                    \
     LAPACK_R_NAME(dpotrf)(uplo, &n, a, &lda, &info)

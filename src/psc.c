@@ -13,25 +13,17 @@
 #include "olsreg.h"
 #include "config.h"
 #include "psc.h"
+#include "evd.h"
 
 
-static BLAS_INT BLAS_M1L = -1;
 static const double BLAS_0F = 0.0;
 static const double BLAS_1F = 1.0;
-
-static const double LAPACK_EV_ABSTOL = NUMERIC_EPS;
-static const double LAPACK_EV_RANGE_LOWER = LAPACK_EV_MIN;
-static const double LAPACK_EV_RANGE_UPPER = DBL_MAX;
 
 static BLAS_CHAR BLAS_SIDE_LEFT = "L";
 static BLAS_CHAR BLAS_UPLO_UPPER = "U";
 static BLAS_CHAR BLAS_TRANS_NO = "N";
 static BLAS_CHAR BLAS_TRANS_TRANS = "T";
 static BLAS_CHAR BLAS_DIAG_NO = "N";
-
-static int doEigenDecomposition(const char *const uplo, double *restrict matrix, const int n,
-                                AuxMemory *const auxmem);
-
 
 int calculatePSCs(double *restrict pscs, AuxMemory* auxmem,
                   const double *restrict Xtr, const double *restrict y,
@@ -57,17 +49,32 @@ int calculatePSCs(double *restrict pscs, AuxMemory* auxmem,
      */
     resizeAuxMemory(auxmem, nvar, nobs);
 
-    memcpy(auxmem->XsqrtInvX, Xtr, nobs * nvar * sizeof(double));
+    if (auxmem->isXsqrtInverted == 1) {
+        /* auxmem->Xsqrt is the inverse of (t(X) . X)^1/2 */
 
-    /* t(XsqrtInvX) = t(inv(Xsqrt)) %*% t(X) */
-    BLAS_DTRSM(BLAS_SIDE_LEFT, BLAS_UPLO_UPPER, BLAS_TRANS_TRANS, BLAS_DIAG_NO,
-               nvar, nobs, BLAS_1F, auxmem->Xsqrt, nvar, auxmem->XsqrtInvX, nvar);
+        /* XsqrtInvX = XsqrtInv . t(X) */
+        BLAS_DGEMM(BLAS_TRANS_NO, BLAS_TRANS_NO, nvar, nobs, nvar,
+            BLAS_1F, auxmem->Xsqrt, nvar, Xtr, nvar,
+            BLAS_0F, auxmem->XsqrtInvX, nvar);
 
-    memcpy(XtXinvX, auxmem->XsqrtInvX, nobs * nvar * sizeof(double));
+        /* XtXinvX = XsqrtInv . XsqrtInvX */
+        BLAS_DGEMM(BLAS_TRANS_NO, BLAS_TRANS_NO, nvar, nobs, nvar,
+            BLAS_1F, auxmem->Xsqrt, nvar, auxmem->XsqrtInvX, nvar,
+            BLAS_0F, XtXinvX, nvar);
+    } else {
+        /* auxmem->Xsqrt is the Cholesky decomposition of t(X) . X */
+        memcpy(auxmem->XsqrtInvX, Xtr, nobs * nvar * sizeof(double));
 
-    /* XtXinvX = inv(Xsqrt) %*% t(XsqrtInvX) */
-    BLAS_DTRSM(BLAS_SIDE_LEFT, BLAS_UPLO_UPPER, BLAS_TRANS_NO, BLAS_DIAG_NO,
-               nvar, nobs, BLAS_1F, auxmem->Xsqrt, nvar, XtXinvX, nvar);
+        /* t(XsqrtInvX) = t(inv(Xsqrt)) %*% t(X) */
+        BLAS_DTRSM(BLAS_SIDE_LEFT, BLAS_UPLO_UPPER, BLAS_TRANS_TRANS, BLAS_DIAG_NO,
+                   nvar, nobs, BLAS_1F, auxmem->Xsqrt, nvar, auxmem->XsqrtInvX, nvar);
+
+        memcpy(XtXinvX, auxmem->XsqrtInvX, nobs * nvar * sizeof(double));
+
+        /* XtXinvX = inv(Xsqrt) %*% t(XsqrtInvX) */
+        BLAS_DTRSM(BLAS_SIDE_LEFT, BLAS_UPLO_UPPER, BLAS_TRANS_NO, BLAS_DIAG_NO,
+                   nvar, nobs, BLAS_1F, auxmem->Xsqrt, nvar, XtXinvX, nvar);
+    }
 
     /* t(G) = t(XsqrtInvX) %*% diag(W[i, i]) */
     iterG = G;
@@ -100,49 +107,14 @@ int calculatePSCs(double *restrict pscs, AuxMemory* auxmem,
                BLAS_1F, G, nvar, G, nvar,
                BLAS_0F, auxmem->Q, nvar);
 
-    nevalues = doEigenDecomposition(BLAS_UPLO_UPPER, auxmem->Q, nvar, auxmem);
+    nevalues = symEigenValueDecomposition(BLAS_UPLO_UPPER, auxmem->Q, nvar, auxmem);
 
     if (nevalues > 0) {
         BLAS_DGEMM(BLAS_TRANS_TRANS, BLAS_TRANS_NO, nobs, nevalues, nvar,
                    BLAS_1F, auxmem->XsqrtInvX, nvar, auxmem->eigenvectors, nvar,
                    BLAS_0F, pscs, nobs);
-    }
-
-    return nevalues;
-}
-
-
-static int doEigenDecomposition(const char *const uplo, double *restrict matrix, const int n,
-                                AuxMemory *const auxmem)
-{
-    int nevalues, lapackInfo;
-
-    /* Compute needed size of working space */
-    LAPACK_DSYEVR_RANGE(uplo, n, matrix, n,
-                        LAPACK_EV_RANGE_LOWER, LAPACK_EV_RANGE_UPPER, LAPACK_EV_ABSTOL,
-                        nevalues, auxmem->evalues,
-                        auxmem->eigenvectors, n, auxmem->evectorsSupport,
-                        auxmem->dblWorkMem, BLAS_M1L,
-                        auxmem->intWorkMem, BLAS_M1L, lapackInfo);
-
-    if (lapackInfo != 0) {
-        return -abs(lapackInfo);
-    }
-
-    resizeDblWorkAuxMemory(auxmem, (int) auxmem->dblWorkMem[0]);
-    resizeIntWorkAuxMemory(auxmem, auxmem->intWorkMem[0]);
-
-    /* Actually perform eigenvalue decomposition */
-    LAPACK_DSYEVR_RANGE(uplo, n, matrix, n,
-                        LAPACK_EV_RANGE_LOWER, LAPACK_EV_RANGE_UPPER, LAPACK_EV_ABSTOL,
-                        nevalues, auxmem->evalues,
-                        auxmem->eigenvectors, n, auxmem->evectorsSupport,
-                        auxmem->dblWorkMem, auxmem->dblWorkMemSize,
-                        auxmem->intWorkMem, auxmem->intWorkMemSize, lapackInfo);
-
-
-    if (lapackInfo != 0) {
-        return -abs(lapackInfo);
+    } else if (nevalues < 0) {
+        auxmem->intWorkMem[0] = auxmem->evalues[0];
     }
 
     return nevalues;

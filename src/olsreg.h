@@ -10,20 +10,31 @@
 #define olsreg_h
 
 #include "config.h"
+#include "AuxMemory.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#define OLS_COEFFICIENTS_OKAY 0
+#define OLS_COEFFICIENTS_PSEUDO 1
+#define OLS_COEFFICIENTS_ERROR 2
+
 /**
  * Compute the OLS coefficients using the Cholesky decomposition which
  * will be stored in `Xsqrt`.
+ * If the system is rank-deficient, a slow SVD is used instead and `Xsqrt` will
+ * be used to store the Moore-Penrose pseudo-inverse of (t(X) . X)^1/2
  *
- * @return A return value not equal 0 indicates an error.
+ * @return 0 ... coefficients have been computed. Cholesky decomposition is stored in Xsqrt
+ *         1 ... coefficients have been computed. Xsqrt holds the Moore-Penrose pseudo inverse
+ *               of (t(X) . X)^1/2
+ *         2 ... LAPACK routine gave an error. Error code is stored in the first element
+ *               of auxmem->intWorkMem.
  */
 int computeOLSCoefs(const double *restrict Xtr, const double *restrict y,
 					const int nobs, const int nvar,
-					double *restrict coefs, double *restrict Xsqrt);
+					double *restrict coefs, AuxMemory *auxmem);
 
 /**
  * Compute residuals for linear regression given the coefficients and the data

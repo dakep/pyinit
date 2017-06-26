@@ -21,16 +21,6 @@
 
 #define MAX_NUM_PSCS(numVar) (3 * numVar + 2)
 
-static BLAS_INT BLAS_1L = 1;
-static const double BLAS_0F = 0.0;
-static const double BLAS_1F = 1.0;
-static const double BLAS_M1F = -1.0;
-
-static BLAS_CHAR BLAS_UPLO_UPPER = "U";
-static BLAS_CHAR BLAS_TRANS_NO = "N";
-static BLAS_CHAR BLAS_TRANS_TRANS = "T";
-static BLAS_CHAR BLAS_DIAG_NO = "N";
-
 /**
  * NOTE: `estimates` must be able to hold nvar * (3 * nvar + 1) + nobs elements.
  * The first nvar * (3 * nvar + 1) elements are the initial estimates, the remaining
@@ -134,6 +124,7 @@ static int computeInitialEstimator(const double *restrict Xtr, const double *res
     int j;
     int numPSCs = 0;
     int linalgError = 0;
+    int compCoefsStatus = 0;
     double *restrict currentPSC;
     int filteredNobs;
     double diff, normPrevBest = 0, normBest = 0;
@@ -160,9 +151,9 @@ static int computeInitialEstimator(const double *restrict Xtr, const double *res
         memcpy(filteredY, currentY, currentNobs * sizeof(double));
 
         /* 1. Estimate coefficients for the residuales filtered data (currentXtr) */
-        linalgError = computeOLSCoefs(filteredXtr, filteredY, currentNobs, nvar, currentEst,
-                                      auxmem.Xsqrt);
-
+        compCoefsStatus = computeOLSCoefs(filteredXtr, filteredY, currentNobs, nvar, currentEst,
+                                          &auxmem);
+        linalgError = auxmem.intWorkMem[0];
         if (linalgError != 0) {
             break;
         }
@@ -188,106 +179,97 @@ static int computeInitialEstimator(const double *restrict Xtr, const double *res
 
         for(j = 0; j < numPSCs; ++j) {
             currentPSC = pscs + currentNobs * j;
-            /* 4.1. Thin out X and y based on large values of PSCs */
+            /* 4.1.1 Thin out X and y based on large values of PSCs */
             scaledThreshold = getQuantile(currentPSC, currentNobs, ctrl->pscProportion,
                                           lessThan);
-
 
             filteredNobs = filterDataThreshold(currentXtr, currentY, filteredXtr, filteredY,
                                                currentNobs, nvar, currentPSC,
                                                scaledThreshold, lessThan);
 
-
-            /* 4.2. Estimate coefficients */
+            /* 4.1.2. Estimate coefficients */
             currentEst += nvar;
             if (filteredNobs > 0) {
-                linalgError = computeOLSCoefs(filteredXtr, filteredY, filteredNobs, nvar, currentEst,
-                                              auxmem.Xsqrt);
+                compCoefsStatus = computeOLSCoefs(filteredXtr, filteredY, filteredNobs, nvar,
+                                                  currentEst, &auxmem);
             } else {
-                linalgError = 1;
+                compCoefsStatus = OLS_COEFFICIENTS_ERROR;
             }
 
-            if (linalgError != 0) {
-                linalgError = 0;
+            if (compCoefsStatus == OLS_COEFFICIENTS_OKAY) {
+                computeResiduals(Xtr, y, nobs, nvar, currentEst, auxmem.residuals);
+                *tmpObjective = mscale(auxmem.residuals, nobs, ctrl->mscaleB, ctrl->mscaleEPS,
+                                       ctrl->mscaleMaxIt, rhoFun, ctrl->mscaleCC);
+
+                if (*tmpObjective < *minObjective) {
+                    *minObjective = *tmpObjective;
+                    bestCoefEst = currentEst;
+                }
+            } else {
                 memset(currentEst, 0, nvar * sizeof(double));
-            }
-
-            computeResiduals(Xtr, y, nobs, nvar, currentEst, auxmem.residuals);
-            *tmpObjective = mscale(auxmem.residuals, nobs, ctrl->mscaleB, ctrl->mscaleEPS,
-                                   ctrl->mscaleMaxIt, rhoFun, ctrl->mscaleCC);
-
-            if (*tmpObjective < *minObjective) {
-                *minObjective = *tmpObjective;
-                bestCoefEst = currentEst;
             }
             ++tmpObjective;
 
-            /* 4.1. Thin out X and y based on large values of PSCs */
+            /* 4.2.1. Thin out X and y based on large values of PSCs */
             scaledThreshold = getQuantile(currentPSC, currentNobs, ctrl->pscProportion,
                                           greaterThan);
-
 
             filteredNobs = filterDataThreshold(currentXtr, currentY, filteredXtr, filteredY,
                                                currentNobs, nvar, currentPSC,
                                                scaledThreshold, greaterThan);
 
-
-            /* 4.2. Estimate coefficients */
+            /* 4.2.2. Estimate coefficients */
             currentEst += nvar;
             if (filteredNobs > 0) {
-                linalgError = computeOLSCoefs(filteredXtr, filteredY, filteredNobs, nvar, currentEst,
-                                              auxmem.Xsqrt);
+                compCoefsStatus = computeOLSCoefs(filteredXtr, filteredY, filteredNobs, nvar,
+                                                  currentEst, &auxmem);
             } else {
-                linalgError = 1;
+                compCoefsStatus = OLS_COEFFICIENTS_ERROR;
             }
 
-            if (linalgError != 0) {
-                linalgError = 0;
+            if (compCoefsStatus == OLS_COEFFICIENTS_OKAY) {
+                computeResiduals(Xtr, y, nobs, nvar, currentEst, auxmem.residuals);
+                *tmpObjective = mscale(auxmem.residuals, nobs, ctrl->mscaleB, ctrl->mscaleEPS,
+                                       ctrl->mscaleMaxIt, rhoFun, ctrl->mscaleCC);
+
+                if (*tmpObjective < *minObjective) {
+                    *minObjective = *tmpObjective;
+                    bestCoefEst = currentEst;
+                }
+            } else {
                 memset(currentEst, 0, nvar * sizeof(double));
-            }
-
-            computeResiduals(Xtr, y, nobs, nvar, currentEst, auxmem.residuals);
-            *tmpObjective = mscale(auxmem.residuals, nobs, ctrl->mscaleB, ctrl->mscaleEPS,
-                                   ctrl->mscaleMaxIt, rhoFun, ctrl->mscaleCC);
-
-            if (*tmpObjective < *minObjective) {
-                *minObjective = *tmpObjective;
-                bestCoefEst = currentEst;
             }
             ++tmpObjective;
 
 
-            /* 4.1. Thin out X and y based on large values of PSCs */
+            /* 4.3.1. Thin out X and y based on large values of PSCs */
             scaledThreshold = getQuantile(currentPSC, currentNobs, ctrl->pscProportion,
                                           absoluteLessThan);
-
 
             filteredNobs = filterDataThreshold(currentXtr, currentY, filteredXtr, filteredY,
                                                currentNobs, nvar, currentPSC,
                                                scaledThreshold, absoluteLessThan);
 
-
-            /* 4.2. Estimate coefficients */
+            /* 4.3.2. Estimate coefficients */
             currentEst += nvar;
             if (filteredNobs > 0) {
-                linalgError = computeOLSCoefs(filteredXtr, filteredY, filteredNobs, nvar, currentEst,
-                                              auxmem.Xsqrt);
+                compCoefsStatus = computeOLSCoefs(filteredXtr, filteredY, filteredNobs, nvar,
+                                                  currentEst, &auxmem);
             } else {
-                linalgError = 1;
+                compCoefsStatus = OLS_COEFFICIENTS_ERROR;
             }
 
-            if (linalgError != 0) {
-                linalgError = 0;
+            if (compCoefsStatus == OLS_COEFFICIENTS_OKAY) {
+                computeResiduals(Xtr, y, nobs, nvar, currentEst, auxmem.residuals);
+                *tmpObjective = mscale(auxmem.residuals, nobs, ctrl->mscaleB, ctrl->mscaleEPS,
+                                       ctrl->mscaleMaxIt, rhoFun, ctrl->mscaleCC);
+
+                if (*tmpObjective < *minObjective) {
+                    *minObjective = *tmpObjective;
+                    bestCoefEst = currentEst;
+                }
+            } else {
                 memset(currentEst, 0, nvar * sizeof(double));
-            }
-
-            computeResiduals(Xtr, y, nobs, nvar, currentEst, auxmem.residuals);
-            *tmpObjective = mscale(auxmem.residuals, nobs, ctrl->mscaleB, ctrl->mscaleEPS,
-                                   ctrl->mscaleMaxIt, rhoFun, ctrl->mscaleCC);
-
-            if (*tmpObjective < *minObjective) {
-                *minObjective = *tmpObjective;
-                bestCoefEst = currentEst;
             }
             ++tmpObjective;
         }

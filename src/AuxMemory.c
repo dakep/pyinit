@@ -16,6 +16,7 @@ void initAuxMemory(AuxMemory* auxmem)
     auxmem->intWorkMemSize = 0;
     auxmem->nvar = 0;
     auxmem->nobs = 0;
+    auxmem->isXsqrtInverted = 0;
 }
 
 void freeAuxMemory(AuxMemory* auxmem)
@@ -62,6 +63,7 @@ void resizeAuxMemory(AuxMemory* auxmem, const int nvar, const int nobs)
 
         auxmem->nvar = nvar;
 
+        auxmem->isXsqrtInverted = 0;
         auxmem->Xsqrt = (double*) malloc(nvar * nvar * sizeof(double));
         auxmem->evalues = (double*) malloc(nvar * sizeof(double));
         auxmem->evectorsSupport = (int*) malloc(2 * nvar * sizeof(int));

@@ -27,7 +27,7 @@
  * @param nvar	 The number of variables in X
  * @param auxmem Auxilliary memory used during computation
  * @return Returns the number of PSCs or values less than 0 if an error
- *		   occured.
+ *		   occured. The error code is stored in the first entry of auxmem->intWorkMem
  */
 int calculatePSCs(double *restrict pscs, AuxMemory* auxmem,
                   const double *restrict Xtr, const double *restrict y,

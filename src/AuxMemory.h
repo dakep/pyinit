@@ -11,6 +11,7 @@
 
 typedef struct _AuxMemoryTag {
     double *restrict Xsqrt;
+    int isXsqrtInverted;
     double *restrict evalues;
     double *restrict eigenvectors;
     int *restrict evectorsSupport;
