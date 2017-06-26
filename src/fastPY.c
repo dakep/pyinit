@@ -46,6 +46,8 @@ static int filterDataThreshold(const double *restrict X, const double *restrict 
                                 const double *restrict values, const double threshold,
                                 CompareFunction compare);
 
+static void getMatDims(SEXP matrix, int* nrows, int* ncols);
+
 /*
  * Compare functions
  */
@@ -59,8 +61,6 @@ static double absoluteLessThan(const double a, const double b);
  *
  * @param RXtr   numeric The (nvar by nobs) transposed X matrix
  * @param Ry	 numeric The (nobs) y vector
- * @param Rnobs  integer The number of observations in X and y
- * @param Rnvar  integer The number of variables in X
  * @param RnumIt integer The maximum number of iterations
  * @param Reps   numeric The relative tolerance for convergence
 
@@ -71,7 +71,7 @@ static double absoluteLessThan(const double a, const double b);
  *          item 2: The matrix of initial estimators
  *          item 3: The value of the objective function for each estimator
  */
-SEXP C_initpy(SEXP RXtr, SEXP Ry, SEXP Rnobs, SEXP Rnvar, SEXP RnumIt,
+SEXP C_initpy(SEXP RXtr, SEXP Ry, SEXP RnumIt,
               SEXP Reps, SEXP RresidThreshold, SEXP RresidProportion,
               SEXP RpscProportion, SEXP RmscaleB, SEXP RmscaleCC,
               SEXP RmscaleMaxIt, SEXP RmscaleEPS, SEXP RmscaleRhoFun)
@@ -89,8 +89,8 @@ SEXP C_initpy(SEXP RXtr, SEXP Ry, SEXP Rnobs, SEXP Rnvar, SEXP RnumIt,
         .mscaleRhoFun = *INTEGER(RmscaleRhoFun)
     };
 
-    const int nobs = *INTEGER(Rnobs);
-    const int nvar = *INTEGER(Rnvar);
+    int nobs = 0, nvar = 0;
+    getMatDims(RXtr, &nvar, &nobs);
 
     SEXP result = PROTECT(Rf_allocVector(VECSXP, 3));
     SEXP numCoefs = PROTECT(Rf_allocVector(INTSXP, 1));
@@ -422,3 +422,21 @@ static double absoluteLessThan(const double a, const double b)
 {
     return fabs(a) - fabs(b);
 }
+
+/***************************************************************************************************
+ *
+ * Other static helper functions
+ *
+ **************************************************************************************************/
+static inline void getMatDims(SEXP matrix, int* nrows, int* ncols)
+{
+    SEXP Rdims;
+    int* dims;
+    PROTECT(Rdims = Rf_getAttrib(matrix, R_DimSymbol));
+    dims = INTEGER(Rdims);
+    *nrows = dims[0];
+    *ncols = dims[1];
+    UNPROTECT(1);
+}
+
+

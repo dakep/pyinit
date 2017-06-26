@@ -60,6 +60,7 @@ pyinit <- function(X, y, intercept = TRUE, deltaesc = 0.5, cc.scale = 1.54764, p
     if (!identical(intercept, FALSE)) {
         ## Add leading column of 1's
         X <- cbind(1, X)
+        dX[2L] <- dX[2L] + 1L
     }
 
     # Force X to be stored as double
@@ -130,8 +131,6 @@ pyinit <- function(X, y, intercept = TRUE, deltaesc = 0.5, cc.scale = 1.54764, p
         C_initpy,
         t(X),
         y,
-        dX[1L],
-        dX[2L],
         ctrl$numIt,
         ctrl$eps,
         ctrl$resid.threshold,
