@@ -50,11 +50,16 @@ int symEigenValueDecomposition(const char *const uplo, double *restrict matrix, 
                         auxmem->dblWorkMem, auxmem->dblWorkMemSize,
                         auxmem->intWorkMem, auxmem->intWorkMemSize, lapackInfo);
 
-
-    if (lapackInfo != 0) {
+    /* One of the arguments was wrong */
+    if (lapackInfo < 0) {
         auxmem->intWorkMem[0] = lapackInfo;
         return -1;
     }
+
+    /*
+     * Positive error codes probably indicate that some eigenvectors did
+     * not converge --> we ignore that error
+     */
 
     auxmem->intWorkMem[0] = 0;
     return nevalues;
