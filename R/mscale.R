@@ -8,7 +8,7 @@
 #' \code{NA} values in \code{x} are removed before calculating the
 #'
 #' @param x A numeric vector.
-#' @param b The value of the M-estimation equation.
+#' @param delta The value of the M-estimation equation.
 #' @param rho The rho function to use in the M-estimation equation.
 #' @param cc Non-negative constant for the chosen rho function. If missing, it will be
 #'          chosen such that the expected value of the rho function under the normal model
@@ -19,7 +19,7 @@
 #' @return Numeric vector of length one
 #'
 #' @useDynLib pyinit C_mscale
-mscale <- function(x, b = 0.5, rho = c("bisquare", "huber"), cc,
+mscale <- function(x, delta = 0.5, rho = c("bisquare", "huber"), cc,
                    eps = 1e-8, max.it = 200) {
 
     if (!is.numeric(x) || !is.null(dim(x)) || length(x) == 0) {
@@ -42,7 +42,7 @@ mscale <- function(x, b = 0.5, rho = c("bisquare", "huber"), cc,
         resid.threshold = 2,
         resid.proportion = .5,
         psc.proportion = .5,
-        mscale.delta = b,
+        mscale.delta = delta,
         mscale.cc = cc,
         mscale.maxit = max.it,
         mscale.tol = eps,
@@ -51,8 +51,16 @@ mscale <- function(x, b = 0.5, rho = c("bisquare", "huber"), cc,
 
     x <- as.numeric(x)
 
-    scale <- .Call(C_mscale, x, length(x), ctrl$mscale.delta, ctrl$mscale.cc, ctrl$mscale.maxit,
-                   ctrl$mscale.tol, ctrl$mscale.rho.fun)
+    scale <- .Call(
+        C_mscale,
+        x,
+        length(x),
+        ctrl$mscale.delta,
+        ctrl$mscale.cc,
+        ctrl$mscale.maxit,
+        ctrl$mscale.tol,
+        ctrl$mscale.rho.fun
+    )
 
     if (!is.finite(scale)) {
         scale <- NA_real_
