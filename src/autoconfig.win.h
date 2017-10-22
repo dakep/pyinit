@@ -1,8 +1,8 @@
 /* confdefs.h */
 #define PACKAGE_NAME "pyinit"
 #define PACKAGE_TARNAME "pyinit"
-#define PACKAGE_VERSION "0.1"
-#define PACKAGE_STRING "pyinit"
+#define PACKAGE_VERSION "0.2.5"
+#define PACKAGE_STRING "pyinit 0.2.5"
 #define PACKAGE_BUGREPORT ""
 #define PACKAGE_URL ""
 #define STDC_HEADERS 1
@@ -20,3 +20,4 @@
 #define HAVE_LIMITS_H 1
 #define HAVE_UINT8_16_MAX 1
 #define HAVE_UINT32_MAX 1
+/* #undef RESTRICT */

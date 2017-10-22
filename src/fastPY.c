@@ -6,10 +6,11 @@
  *  Copyright © 2016 David Kepplinger. All rights reserved.
  */
 
-#include <Rinternals.h>
 #include <Rmath.h>
 #include <stdlib.h>
 #include <float.h>
+
+#include "fastPY.h"
 
 #include "BLAS.h"
 #include "Control.h"
@@ -19,24 +20,11 @@
 #include "olsreg.h"
 #include "psc.h"
 
-#define MAX_NUM_PSCS(numVar) (3 * numVar + 2)
-
-/**
- * NOTE: `estimates` must be able to hold nvar * (3 * nvar + 1) + nobs elements.
- * The first nvar * (3 * nvar + 1) elements are the initial estimates, the remaining
- * nobs elements can be discared!
- */
-static int computeInitialEstimator(const double *restrict X, const double *restrict y,
-                                   const int nobs, const int nvar, const Control* ctrl,
-                                   double *restrict estimates, double *restrict objFunScores);
-
 static int filterDataThreshold(const double *restrict X, const double *restrict y,
                                 double *restrict newX, double *restrict newY,
                                 const int nobs, const int nvar,
                                 const double *restrict values, const double threshold,
                                 CompareFunction compare);
-
-static void getMatDims(SEXP matrix, int* nrows, int* ncols);
 
 /*
  * Compare functions
@@ -46,67 +34,14 @@ static double greaterThan(const double a, const double b);
 static double absoluteLessThan(const double a, const double b);
 
 
-/**
- * Calculate the Pena-Yohai initial estimator
- *
- * @param RXtr   numeric The (nvar by nobs) transposed X matrix
- * @param Ry	 numeric The (nobs) y vector
- * @param RnumIt integer The maximum number of iterations
- * @param Reps   numeric The relative tolerance for convergence
-
- * @param RnumInits integer OUTPUT the number of actual initial estimators
- *
- * @return Returns a list with three elements:
- *          item 1: The number of initial estimators returned
- *          item 2: The matrix of initial estimators
- *          item 3: The value of the objective function for each estimator
- */
-SEXP C_initpy(SEXP RXtr, SEXP Ry, SEXP RnumIt,
-              SEXP Reps, SEXP RresidThreshold, SEXP RresidProportion,
-              SEXP RpscProportion, SEXP RmscaleB, SEXP RmscaleCC,
-              SEXP RmscaleMaxIt, SEXP RmscaleEPS, SEXP RmscaleRhoFun)
-{
-    Control ctrl = {
-        .numIt = *INTEGER(RnumIt),
-        .eps = *REAL(Reps),
-        .residThreshold = *REAL(RresidThreshold),
-        .residProportion = *REAL(RresidProportion),
-        .pscProportion = *REAL(RpscProportion),
-        .mscaleB = *REAL(RmscaleB),
-        .mscaleCC = *REAL(RmscaleCC),
-        .mscaleMaxIt = *INTEGER(RmscaleMaxIt),
-        .mscaleEPS = *REAL(RmscaleEPS),
-        .mscaleRhoFun = *INTEGER(RmscaleRhoFun)
-    };
-
-    int nobs = 0, nvar = 0;
-    getMatDims(RXtr, &nvar, &nobs);
-
-    SEXP result = PROTECT(Rf_allocVector(VECSXP, 3));
-    SEXP numCoefs = PROTECT(Rf_allocVector(INTSXP, 1));
-    SEXP coefs = PROTECT(Rf_allocVector(REALSXP, MAX_NUM_PSCS(nvar) * nvar));
-    SEXP objF = PROTECT(Rf_allocVector(REALSXP, MAX_NUM_PSCS(nvar)));
-
-    *INTEGER(numCoefs) = computeInitialEstimator(REAL(RXtr), REAL(Ry), nobs, nvar, &ctrl,
-                                                 REAL(coefs), REAL(objF));
-
-    SET_VECTOR_ELT(result, 0, numCoefs);
-    SET_VECTOR_ELT(result, 1, coefs);
-    SET_VECTOR_ELT(result, 2, objF);
-
-    UNPROTECT(4);
-    return result;
-}
-
-
 /***************************************************************************************************
  *
  * Main function to compute the initial estimator
  *
  **************************************************************************************************/
-static int computeInitialEstimator(const double *restrict Xtr, const double *restrict y,
-                                   const int nobs, const int nvar, const Control* ctrl,
-                                   double *restrict estimates, double *restrict objFunScores)
+int computePYEstimator(const double *restrict Xtr, const double *restrict y,
+                       const int nobs, const int nvar, const Control* ctrl,
+                       double *restrict estimates, double *restrict objFunScores)
 {
     AuxMemory auxmem;
     double *restrict bestCoefEst;
@@ -159,8 +94,8 @@ static int computeInitialEstimator(const double *restrict Xtr, const double *res
         }
 
         computeResiduals(Xtr, y, nobs, nvar, currentEst, auxmem.residuals);
-        *tmpObjective = mscale(auxmem.residuals, nobs, ctrl->mscaleB, ctrl->mscaleEPS,
-                               ctrl->mscaleMaxIt, rhoFun, ctrl->mscaleCC);
+        *tmpObjective = mscale(auxmem.residuals, nobs, ctrl->mscaleDelta, ctrl->mscaleEps,
+                               ctrl->mscaleMaxit, rhoFun, ctrl->mscaleCc);
 
         if (*tmpObjective < *minObjective) {
             bestCoefEst = currentEst;
@@ -198,8 +133,8 @@ static int computeInitialEstimator(const double *restrict Xtr, const double *res
 
             if (compCoefsStatus == OLS_COEFFICIENTS_OKAY) {
                 computeResiduals(Xtr, y, nobs, nvar, currentEst, auxmem.residuals);
-                *tmpObjective = mscale(auxmem.residuals, nobs, ctrl->mscaleB, ctrl->mscaleEPS,
-                                       ctrl->mscaleMaxIt, rhoFun, ctrl->mscaleCC);
+                *tmpObjective = mscale(auxmem.residuals, nobs, ctrl->mscaleDelta, ctrl->mscaleEps,
+                                       ctrl->mscaleMaxit, rhoFun, ctrl->mscaleCc);
 
                 if (*tmpObjective < *minObjective) {
                     *minObjective = *tmpObjective;
@@ -229,8 +164,8 @@ static int computeInitialEstimator(const double *restrict Xtr, const double *res
 
             if (compCoefsStatus == OLS_COEFFICIENTS_OKAY) {
                 computeResiduals(Xtr, y, nobs, nvar, currentEst, auxmem.residuals);
-                *tmpObjective = mscale(auxmem.residuals, nobs, ctrl->mscaleB, ctrl->mscaleEPS,
-                                       ctrl->mscaleMaxIt, rhoFun, ctrl->mscaleCC);
+                *tmpObjective = mscale(auxmem.residuals, nobs, ctrl->mscaleDelta, ctrl->mscaleEps,
+                                       ctrl->mscaleMaxit, rhoFun, ctrl->mscaleCc);
 
                 if (*tmpObjective < *minObjective) {
                     *minObjective = *tmpObjective;
@@ -261,8 +196,8 @@ static int computeInitialEstimator(const double *restrict Xtr, const double *res
 
             if (compCoefsStatus == OLS_COEFFICIENTS_OKAY) {
                 computeResiduals(Xtr, y, nobs, nvar, currentEst, auxmem.residuals);
-                *tmpObjective = mscale(auxmem.residuals, nobs, ctrl->mscaleB, ctrl->mscaleEPS,
-                                       ctrl->mscaleMaxIt, rhoFun, ctrl->mscaleCC);
+                *tmpObjective = mscale(auxmem.residuals, nobs, ctrl->mscaleDelta, ctrl->mscaleEps,
+                                       ctrl->mscaleMaxit, rhoFun, ctrl->mscaleCc);
 
                 if (*tmpObjective < *minObjective) {
                     *minObjective = *tmpObjective;
@@ -296,7 +231,7 @@ static int computeInitialEstimator(const double *restrict Xtr, const double *res
         /*
          * Check if we reached the maximum number of iterations
          */
-        if ((++iter >= ctrl->numIt) || (diff < ctrl->eps * normPrevBest)) {
+        if ((++iter >= ctrl->numit) || (diff < ctrl->eps * normPrevBest)) {
             break;
         }
 
@@ -305,11 +240,11 @@ static int computeInitialEstimator(const double *restrict Xtr, const double *res
         /* 6. Calculate residuals with best coefficient estimate again */
         computeResiduals(Xtr, y, nobs, nvar, bestCoefEst, auxmem.residuals);
 
-        if (ctrl->residThreshold < 0) {
-            scaledThreshold = getQuantile(auxmem.residuals, nobs, ctrl->residProportion,
+        if (ctrl->keepResidThreshold <= 0) {
+            scaledThreshold = getQuantile(auxmem.residuals, nobs, ctrl->keepResidProportion,
                                           absoluteLessThan);
         } else {
-            scaledThreshold = ctrl->residThreshold * (*minObjective);
+            scaledThreshold = ctrl->keepResidThreshold * (*minObjective);
         }
 
         currentNobs = filterDataThreshold(Xtr, y, currentXtr, currentY, nobs, nvar, auxmem.residuals,
@@ -404,21 +339,3 @@ static double absoluteLessThan(const double a, const double b)
 {
     return fabs(a) - fabs(b);
 }
-
-/***************************************************************************************************
- *
- * Other static helper functions
- *
- **************************************************************************************************/
-static inline void getMatDims(SEXP matrix, int* nrows, int* ncols)
-{
-    SEXP Rdims;
-    int* dims;
-    PROTECT(Rdims = Rf_getAttrib(matrix, R_DimSymbol));
-    dims = INTEGER(Rdims);
-    *nrows = dims[0];
-    *ncols = dims[1];
-    UNPROTECT(1);
-}
-
-

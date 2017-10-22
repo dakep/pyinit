@@ -2,5 +2,9 @@
 
 export(pyinit)
 importFrom(robustbase,.Mchi)
+importFrom(stats,dnorm)
+importFrom(stats,integrate)
+importFrom(stats,pnorm)
+importFrom(stats,uniroot)
 useDynLib(pyinit,C_initpy)
 useDynLib(pyinit,C_mscale)

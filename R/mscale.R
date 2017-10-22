@@ -1,26 +1,26 @@
 #' Robust M-estimate of Scale
 #'
-#' Compute the M-estimate of scale with MAD as initial estimate.
+#' Compute the M-estimate of scale using the MAD as initial estimate.
 #'
 #' This solves the M-estimation equation given by
-#' \deqn{\sum_{i=1}^n \rho( x_i / s_n; cc ) = n b}
+#' \deqn{\sum_{i=1}^n \rho( x_i / s_n; cc ) = n delta}
 #'
-#' \code{NA} values in \code{x} are removed before calculating the
+#' All \code{NA} values in \code{x} are removed before calculating the scale.
 #'
-#' @param x A numeric vector.
-#' @param delta The value of the M-estimation equation.
-#' @param rho The rho function to use in the M-estimation equation.
-#' @param cc Non-negative constant for the chosen rho function. If missing, it will be
+#' @param x numeric vector.
+#' @param delta desired value of the M-estimation equation.
+#' @param rho rho function to use in the M-estimation equation.
+#' @param cc non-negative constant for the chosen rho function. If missing, it will be
 #'          chosen such that the expected value of the rho function under the normal model
-#'          is equal to \code{b}.
-#' @param eps Threshold for convergence
-#' @param max.it The maximum number of iterations
+#'          is equal to \code{delta}.
+#' @param eps threshold for convergence.
+#' @param maxit maximum number of iterations.
 #'
 #' @return Numeric vector of length one
 #'
 #' @useDynLib pyinit C_mscale
 mscale <- function(x, delta = 0.5, rho = c("bisquare", "huber"), cc,
-                   eps = 1e-8, max.it = 200) {
+                   eps = 1e-8, maxit = 200) {
 
     if (!is.numeric(x) || !is.null(dim(x)) || length(x) == 0) {
         stop("`x` must be a numeric vector.")
@@ -32,21 +32,21 @@ mscale <- function(x, delta = 0.5, rho = c("bisquare", "huber"), cc,
     rho <- match.arg(rho)
 
     if (missing(cc)) {
-        cc <- 0
+        cc <- NULL
     }
 
     ctrl <- initest.control(
-        numIt = 1L,
-        eps = 1e-9,
-        resid.clean.method = "proportion",
-        resid.threshold = 2,
-        resid.proportion = .5,
-        psc.proportion = .5,
-        mscale.delta = delta,
-        mscale.cc = cc,
-        mscale.maxit = max.it,
-        mscale.tol = eps,
-        mscale.rho.fun = rho
+        maxit = 0L,
+        eps = 1e-6,
+        psc_keep = 1,
+        resid_keep_method = "threshold",
+        resid_keep_prop = 0,
+        resid_keep_thresh = 0,
+        delta = delta,
+        cc = cc,
+        mscale_maxit = maxit,
+        mscale_tol = eps,
+        mscale_rho_fun = rho
     )
 
     x <- as.numeric(x)
@@ -55,11 +55,11 @@ mscale <- function(x, delta = 0.5, rho = c("bisquare", "huber"), cc,
         C_mscale,
         x,
         length(x),
-        ctrl$mscale.delta,
-        ctrl$mscale.cc,
-        ctrl$mscale.maxit,
-        ctrl$mscale.tol,
-        ctrl$mscale.rho.fun
+        ctrl$mscale_delta,
+        ctrl$mscale_cc,
+        ctrl$mscale_maxit,
+        ctrl$mscale_tol,
+        ctrl$mscale_rho_fun
     )
 
     if (!is.finite(scale)) {

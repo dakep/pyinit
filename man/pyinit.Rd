@@ -4,43 +4,41 @@
 \alias{pyinit}
 \title{PY (Pena-Yohai) initial estimates for S-estimates of regression}
 \usage{
-pyinit(X, y, intercept = TRUE, deltaesc = 0.5, cc.scale = 1.54764, prosac,
-  clean.method = c("threshold", "proportion"), C.res, prop, py.nit, en.tol,
-  mscale.maxit = 200, mscale.tol = 1e-08, mscale.rho.fun = c("bisquare",
-  "huber"))
+pyinit(x, y, intercept = TRUE, delta = 0.5, cc, maxit = 10, psc_keep,
+  resid_keep_method = c("threshold", "proportion"), resid_keep_prop,
+  resid_keep_thresh, eps = 1e-08, mscale_maxit = 200, mscale_tol = eps,
+  mscale_rho_fun = c("bisquare", "huber"))
 }
 \arguments{
-\item{X}{the data matrix X.}
+\item{x}{the data matrix X.}
 
 \item{y}{the response vector.}
 
 \item{intercept}{should an intercept be included in the models. Defaults to \code{TRUE}.}
 
-\item{deltaesc, cc.scale}{parameters for the M-equation of the scale. If \code{cc.scale}
-is missing or invalid, it will be chosen such that the expected value of the
-rho function under the normal model is equal to \code{deltaesc}. To specify the
-rho function, see parameter \code{control}.}
+\item{delta, cc}{parameters for the M-equation of the scale. If \code{cc} is
+missing it will be set to yield consistency under the Normal model.}
 
-\item{prosac}{the proportion of observations to remove based on PSCs.}
+\item{maxit}{the maximum number of iterations to perform.}
 
-\item{clean.method}{how to clean the data based on large residuals.
+\item{psc_keep}{the proportion of observations to keep based on PSCs.}
+
+\item{resid_keep_method}{how to clean the data based on large residuals.
 If \code{"threshold"}, all observations with scaled residuals larger than
-\code{C.res} will be removed (\code{C.res} corresponds to the constant
+\code{resid_keep_thresh} will be removed (\code{resid_keep_thresh} corresponds to the constant
 \eqn{C_1} from equation (21) in Pena & Yohai (1999).
-If \code{"proportion"}, observations with the largest \code{prop} residuals
+If \code{"proportion"}, observations with the largest \code{resid_keep_prop} residuals
 will be removed.}
 
-\item{C.res, prop}{see parameter \code{clean.method} for details.}
+\item{resid_keep_prop, resid_keep_thresh}{see parameter \code{resid_keep_method} for details.}
 
-\item{py.nit}{the maximum number of iterations to perform.}
+\item{eps}{the relative tolerance for convergence.}
 
-\item{en.tol}{the relative tolerance for convergence.}
+\item{mscale_maxit}{Maximum number of iterations allowed for the M-scale algorithm.}
 
-\item{mscale.maxit}{Maximum number of iterations allowed for the m-scale algorithm.}
+\item{mscale_tol}{Convergence threshold for the m-scale}
 
-\item{mscale.tol}{Convergence threshold for the m-scale}
-
-\item{mscale.rho.fun}{The rho function to use for the m-scale.}
+\item{mscale_rho_fun}{The rho function to use for the m-scale.}
 }
 \value{
 \item{initCoef}{A numeric matrix with one initial coefficient per column}
