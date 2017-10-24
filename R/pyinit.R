@@ -4,25 +4,31 @@
 #'
 #' @param x the data matrix X.
 #' @param y the response vector.
-#' @param intercept should an intercept be included in the models. Defaults to \code{TRUE}.
+#' @param intercept should an intercept be included in the models. Defaults to
+#'      \code{TRUE}.
 #' @param delta,cc parameters for the M-equation of the scale. If \code{cc} is
 #'      missing it will be set to yield consistency under the Normal model.
-#' @param psc_keep the proportion of observations to keep based on PSCs.
+#' @param psc_keep proportion of observations to keep based on PSCs.
 #' @param resid_keep_method how to clean the data based on large residuals.
-#'      If \code{"threshold"}, all observations with scaled residuals larger than
-#'      \code{resid_keep_thresh} will be removed (\code{resid_keep_thresh} corresponds to the constant
-#'      \eqn{C_1} from equation (21) in Pena & Yohai (1999).
-#'      If \code{"proportion"}, observations with the largest \code{resid_keep_prop} residuals
-#'      will be removed.
+#'      If \code{"threshold"}, all observations with scaled residuals larger
+#'      than \code{resid_keep_thresh} will be removed (\code{resid_keep_thresh}
+#'      corresponds to the constant \eqn{C_1} from equation (21) in Pena & Yohai
+#'      (1999). If \code{"proportion"}, observations with the largest
+#'      \code{resid_keep_prop} residuals will be removed.
 #' @param maxit the maximum number of iterations to perform.
 #' @param eps the relative tolerance for convergence.
-#' @param resid_keep_prop,resid_keep_thresh see parameter \code{resid_keep_method} for details.
-#' @param mscale_maxit Maximum number of iterations allowed for the M-scale algorithm.
+#' @param resid_keep_prop,resid_keep_thresh see parameter
+#'      \code{resid_keep_method} for details.
+#' @param mscale_maxit maximum number of iterations allowed for the M-scale
+#'      algorithm.
 #' @param mscale_tol Convergence threshold for the m-scale
 #' @param mscale_rho_fun The rho function to use for the m-scale.
 #'
-#' @return \item{initCoef}{A numeric matrix with one initial coefficient per column}
-#'         \item{objF}{A vector of values of the objective function for the respective coefficient}
+#' @return
+#' \item{coefficients}{numeric matrix with one coefficient vector per
+#'      column}
+#' \item{objective}{vector of values of the objective function for the
+#'      respective coefficient}
 #'
 #' @references Pena, D., & Yohai, V.. (1999). A Fast Procedure for Outlier Diagnostics in Large
 #' Regression Problems. \emph{Journal of the American Statistical Association}, 94(446),
@@ -161,7 +167,7 @@ pyinit <- function(
     )
 
     return(list(
-        initCoef = initCoefs,
-        objF = ies[[3L]][seq_len(ies[[1L]])]
+        coefficients = initCoefs,
+        objective = ies[[3L]][seq_len(ies[[1L]])]
     ))
 }

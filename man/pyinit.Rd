@@ -14,35 +14,40 @@ pyinit(x, y, intercept = TRUE, delta = 0.5, cc, maxit = 10, psc_keep,
 
 \item{y}{the response vector.}
 
-\item{intercept}{should an intercept be included in the models. Defaults to \code{TRUE}.}
+\item{intercept}{should an intercept be included in the models. Defaults to
+\code{TRUE}.}
 
 \item{delta, cc}{parameters for the M-equation of the scale. If \code{cc} is
 missing it will be set to yield consistency under the Normal model.}
 
 \item{maxit}{the maximum number of iterations to perform.}
 
-\item{psc_keep}{the proportion of observations to keep based on PSCs.}
+\item{psc_keep}{proportion of observations to keep based on PSCs.}
 
 \item{resid_keep_method}{how to clean the data based on large residuals.
-If \code{"threshold"}, all observations with scaled residuals larger than
-\code{resid_keep_thresh} will be removed (\code{resid_keep_thresh} corresponds to the constant
-\eqn{C_1} from equation (21) in Pena & Yohai (1999).
-If \code{"proportion"}, observations with the largest \code{resid_keep_prop} residuals
-will be removed.}
+If \code{"threshold"}, all observations with scaled residuals larger
+than \code{resid_keep_thresh} will be removed (\code{resid_keep_thresh}
+corresponds to the constant \eqn{C_1} from equation (21) in Pena & Yohai
+(1999). If \code{"proportion"}, observations with the largest
+\code{resid_keep_prop} residuals will be removed.}
 
-\item{resid_keep_prop, resid_keep_thresh}{see parameter \code{resid_keep_method} for details.}
+\item{resid_keep_prop, resid_keep_thresh}{see parameter
+\code{resid_keep_method} for details.}
 
 \item{eps}{the relative tolerance for convergence.}
 
-\item{mscale_maxit}{Maximum number of iterations allowed for the M-scale algorithm.}
+\item{mscale_maxit}{maximum number of iterations allowed for the M-scale
+algorithm.}
 
 \item{mscale_tol}{Convergence threshold for the m-scale}
 
 \item{mscale_rho_fun}{The rho function to use for the m-scale.}
 }
 \value{
-\item{initCoef}{A numeric matrix with one initial coefficient per column}
-        \item{objF}{A vector of values of the objective function for the respective coefficient}
+\item{coefficients}{numeric matrix with one coefficient vector per
+     column}
+\item{objective}{vector of values of the objective function for the
+     respective coefficient}
 }
 \description{
 Computes the PY initial estimates for S-estimates of regression.
