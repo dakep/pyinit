@@ -6,7 +6,6 @@
  *  Copyright © 2016 David Kepplinger. All rights reserved.
  */
 
-#include <Rinternals.h>
 #include <Rmath.h>
 #include <stdlib.h>
 #include <string.h>
@@ -19,6 +18,7 @@ static const double MAD_SCALE_CONSTANT = 1.4826;
 
 static double rhoBisquare(double x, const double c);
 static double rhoHuber(double x, const double c);
+static double rhoGaussWeight(double x, const double c);
 static double absoluteLessThan(const double a, const double b);
 
 
@@ -27,6 +27,9 @@ RhoFunction getRhoFunctionByName(RhoFunctionName name)
     switch (name) {
         case HUBER:
             return rhoHuber;
+            break;
+        case GAUSS:
+            return rhoGaussWeight;
             break;
         case BISQUARE:
         default:
@@ -114,6 +117,12 @@ static double rhoBisquare(double x, const double c)
 static double rhoHuber(double x, const double c)
 {
     return (fabs(x) <= c) ? (x * x * 0.5) : (c * (fabs(x) - c * 0.5));
+}
+
+static double rhoGaussWeight(double x, const double c)
+{
+    x /= c;
+    return -expm1(-(x * x) * 0.5);
 }
 
 static double absoluteLessThan(const double a, const double b)

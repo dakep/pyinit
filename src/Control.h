@@ -11,7 +11,8 @@
 
 typedef enum RhoFunctionNameTag {
     HUBER = 0,
-    BISQUARE = 1
+    BISQUARE = 1,
+    GAUSS = 5
 } RhoFunctionName;
 
 typedef struct ControlTag {

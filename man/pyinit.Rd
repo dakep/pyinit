@@ -7,7 +7,7 @@
 pyinit(x, y, intercept = TRUE, delta = 0.5, cc, maxit = 10, psc_keep,
   resid_keep_method = c("threshold", "proportion"), resid_keep_prop,
   resid_keep_thresh, eps = 1e-08, mscale_maxit = 200, mscale_tol = eps,
-  mscale_rho_fun = c("bisquare", "huber"))
+  mscale_rho_fun = c("bisquare", "huber", "gauss"))
 }
 \arguments{
 \item{x}{the data matrix X.}

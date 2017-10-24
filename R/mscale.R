@@ -19,7 +19,7 @@
 #' @return Numeric vector of length one
 #'
 #' @useDynLib pyinit C_mscale
-mscale <- function(x, delta = 0.5, rho = c("bisquare", "huber"), cc,
+mscale <- function(x, delta = 0.5, rho = c("bisquare", "huber", "gauss"), cc,
                    eps = 1e-8, maxit = 200) {
 
     if (!is.numeric(x) || !is.null(dim(x)) || length(x) == 0) {

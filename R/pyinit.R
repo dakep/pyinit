@@ -43,7 +43,7 @@ pyinit <- function(
     eps = 1e-8,
     mscale_maxit = 200,
     mscale_tol = eps,
-    mscale_rho_fun = c("bisquare", "huber")
+    mscale_rho_fun = c("bisquare", "huber", "gauss")
 ) {
     y <- drop(y)
 
