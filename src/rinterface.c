@@ -5,12 +5,14 @@
 //  Created by David Kepplinger on 2017-10-21.
 //  Copyright © 2017 David Kepplinger. All rights reserved.
 //
-
-#include <Rinternals.h>
+#include "config.h"
 
 #include "mscale.h"
 #include "fastPY.h"
 #include "psc.h"
+
+#include <Rinternals.h>
+#include <R_ext/Rdynload.h>
 
 /**
  * Calculate the M-Scale of a vector of numbers
