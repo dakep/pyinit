@@ -113,8 +113,8 @@ pyinit <- function(
     if ((dx[2L] == 1L) && (var(x) < .Machine$double.eps)) {
         est <- mean(y) / mean(x)
         return(list(
-            initCoef = matrix(est, nrow = 1L, ncol = 1L),
-            objF = mscale(
+            coefficients = matrix(est, nrow = 1L, ncol = 1L),
+            objective = mscale(
                 y - est,
                 delta = ctrl$delta,
                 rho = mscale_rho_fun,
