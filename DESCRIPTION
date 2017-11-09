@@ -2,7 +2,7 @@ Package: pyinit
 Type: Package
 Title: Pena-Yohai Initial Estimator
 Version: 0.2.5
-Date: 2017-10-21
+Date: 2017-11-08
 Author: Gabriela Cohen Freue [aut],
     David Kepplinger [aut],
     Matias Salibian-Barrera [aut]

@@ -35,13 +35,13 @@ mscale <- function(x, delta = 0.5, rho = c("bisquare", "huber", "gauss"), cc,
         cc <- NULL
     }
 
-    ctrl <- initest.control(
-        maxit = 0L,
+    ctrl <- pyinit_control(
+        maxit = 1L,
         eps = 1e-6,
-        psc_keep = 1,
+        psc_keep = 0.5,
         resid_keep_method = "threshold",
-        resid_keep_prop = 0,
-        resid_keep_thresh = 0,
+        resid_keep_prop = 2,
+        resid_keep_thresh = 2,
         delta = delta,
         cc = cc,
         mscale_maxit = maxit,
@@ -54,8 +54,7 @@ mscale <- function(x, delta = 0.5, rho = c("bisquare", "huber", "gauss"), cc,
     scale <- .Call(
         C_mscale,
         x,
-        length(x),
-        ctrl$mscale_delta,
+        ctrl$delta,
         ctrl$mscale_cc,
         ctrl$mscale_maxit,
         ctrl$mscale_tol,
