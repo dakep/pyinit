@@ -10,12 +10,12 @@
 #' @param x numeric vector.
 #' @param delta desired value for the right-hand side of the M-estimation equation.
 #' @param rho rho function to use in the M-estimation equation. Valid options
-#' are \code{bisquare}, \code{huber} and \code{gauss}. 
+#' are \code{bisquare}, \code{huber} and \code{gauss}.
 #' @param cc non-negative constant for the chosen rho function. If missing, it will be
 #'          chosen such that the expected value of the rho function under the normal model
 #'          is equal to \code{delta}.
 #' @param eps threshold for convergence. Defaults to \code{1e-8}.
-#' @param maxit maximum number of iterations. Defaults to \code{200}. 
+#' @param maxit maximum number of iterations. Defaults to \code{200}.
 #'
 #' @return Numeric vector of length one containing the solution \code{s_n} to
 #' the equation above.

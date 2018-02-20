@@ -6,9 +6,9 @@
 #' @param y the response vector.
 #' @param intercept logical, should an intercept be included in the model? Defaults to
 #'      \code{TRUE}.
-#' @param delta, cc parameters for the M-scale estimator equation. If \code{cc} is
+#' @param delta,cc parameters for the M-scale estimator equation. If \code{cc} is
 #'      missing it will be set to yield consistency under the Normal model for the
-#'      given \code{delta} (right-hand side of the M-scale equation). 
+#'      given \code{delta} (right-hand side of the M-scale equation).
 #' @param psc_keep proportion of observations to keep based on PSCs.
 #' @param resid_keep_method how to clean the data based on large residuals.
 #'      If \code{"threshold"}, all observations with scaled residuals larger
@@ -21,20 +21,20 @@
 #' @param resid_keep_prop,resid_keep_thresh see parameter
 #'      \code{resid_keep_method} for details.
 #' @param mscale_maxit maximum number of iterations allowed for the M-scale
-#'      algorithm. Defaults to \code{200}. 
+#'      algorithm. Defaults to \code{200}.
 #' @param mscale_tol convergence threshold for the m-scale
-#' @param mscale_rho_fun A string containing the name of the rho 
+#' @param mscale_rho_fun A string containing the name of the rho
 #' function to use for the M-scale. Valid options
-#' are \code{bisquare}, \code{huber} and \code{gauss}. 
+#' are \code{bisquare}, \code{huber} and \code{gauss}.
 #'
 #' @return
 #' \item{coefficients}{numeric matrix with coefficient vectors in columns. These
-#' are regression estimators based on "cleaned" subsets of the data. The 
-#' M-scales of the corresponding residuals are returned in the entry 
+#' are regression estimators based on "cleaned" subsets of the data. The
+#' M-scales of the corresponding residuals are returned in the entry
 #' \code{objective}. The regression coefficients with smallest estimated
 #' residual scale is in the first column, but the others need not be ordered.}
 #' \item{objective}{vector of values of the M-scale estimate of the residuals
-#' associated with each vector of regression coefficients in the columns of 
+#' associated with each vector of regression coefficients in the columns of
 #' \code{coefficients}.}
 #'
 #' @references Pena, D., & Yohai, V.. (1999). A Fast Procedure for Outlier Diagnostics in Large
@@ -51,10 +51,10 @@
 #' a <- svd(var(x))$v[,4]
 #' x <- rbind(x, t(outer(a, rnorm(20, mean=4, sd=1))))
 #' y <- c(y, rnorm(20, mean=-2, sd=.2))
-#' 
+#'
 #' # these outliers are difficult to find
 #' plot(lm(y~x), ask=FALSE)
-#' 
+#'
 #' # use pyinit to obtain estimated regression coefficients
 #' tmp <- pyinit(x=x, y=y, resid_keep_method='proportion', psc_keep = .5, resid_keep_prop=.5)
 #' # the vector of regression coefficients with smallest residuals scale
@@ -64,7 +64,7 @@
 #' coef(lm(y~x, subset=1:100))
 #' # compare it with the LS estimator on the full data
 #' coef(lm(y~x))
-#' 
+#'
 #'
 #' @useDynLib pyinit C_initpy
 #' @export

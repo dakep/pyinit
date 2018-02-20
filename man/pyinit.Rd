@@ -17,7 +17,7 @@ pyinit(x, y, intercept = TRUE, delta = 0.5, cc, maxit = 10, psc_keep,
 \item{intercept}{logical, should an intercept be included in the model? Defaults to
 \code{TRUE}.}
 
-\item{delta, }{cc parameters for the M-scale estimator equation. If \code{cc} is
+\item{delta, cc}{parameters for the M-scale estimator equation. If \code{cc} is
 missing it will be set to yield consistency under the Normal model for the
 given \code{delta} (right-hand side of the M-scale equation).}
 
@@ -42,18 +42,18 @@ algorithm. Defaults to \code{200}.}
 
 \item{mscale_tol}{convergence threshold for the m-scale}
 
-\item{mscale_rho_fun}{A string containing the name of the rho 
+\item{mscale_rho_fun}{A string containing the name of the rho
 function to use for the M-scale. Valid options
 are \code{bisquare}, \code{huber} and \code{gauss}.}
 }
 \value{
 \item{coefficients}{numeric matrix with coefficient vectors in columns. These
-are regression estimators based on "cleaned" subsets of the data. The 
-M-scales of the corresponding residuals are returned in the entry 
+are regression estimators based on "cleaned" subsets of the data. The
+M-scales of the corresponding residuals are returned in the entry
 \code{objective}. The regression coefficients with smallest estimated
 residual scale is in the first column, but the others need not be ordered.}
 \item{objective}{vector of values of the M-scale estimate of the residuals
-associated with each vector of regression coefficients in the columns of 
+associated with each vector of regression coefficients in the columns of
 \code{coefficients}.}
 }
 \description{
