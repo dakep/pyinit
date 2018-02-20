@@ -47,13 +47,43 @@ function to use for the M-scale. Valid options
 are \code{bisquare}, \code{huber} and \code{gauss}.}
 }
 \value{
-\item{coefficients}{numeric matrix with one coefficient vector per
-     column}
-\item{objective}{vector of values of the objective function for the
-     respective coefficient}
+\item{coefficients}{numeric matrix with coefficient vectors in columns. These
+are regression estimators based on "cleaned" subsets of the data. The 
+M-scales of the corresponding residuals are returned in the entry 
+\code{objective}. The regression coefficients with smallest estimated
+residual scale is in the first column, but the others need not be ordered.}
+\item{objective}{vector of values of the M-scale estimate of the residuals
+associated with each vector of regression coefficients in the columns of 
+\code{coefficients}.}
 }
 \description{
 Computes the PY initial estimates for S-estimates of regression.
+}
+\examples{
+# generate a simple synthetic data set for a linear regression model
+# with true regression coefficients all equal to one "(1, 1, 1, 1, 1)"
+set.seed(123)
+x <- matrix(rnorm(100*4), 100, 4)
+y <- rnorm(100) + rowSums(x) + 1
+# add masked outliers
+a <- svd(var(x))$v[,4]
+x <- rbind(x, t(outer(a, rnorm(20, mean=4, sd=1))))
+y <- c(y, rnorm(20, mean=-2, sd=.2))
+
+# these outliers are difficult to find
+plot(lm(y~x), ask=FALSE)
+
+# use pyinit to obtain estimated regression coefficients
+tmp <- pyinit(x=x, y=y, resid_keep_method='proportion', psc_keep = .5, resid_keep_prop=.5)
+# the vector of regression coefficients with smallest residuals scale
+# is returned in the first column of the "coefficients" element
+tmp$coefficients[,1]
+# compare that with the LS estimator on the clean data
+coef(lm(y~x, subset=1:100))
+# compare it with the LS estimator on the full data
+coef(lm(y~x))
+
+
 }
 \references{
 Pena, D., & Yohai, V.. (1999). A Fast Procedure for Outlier Diagnostics in Large
