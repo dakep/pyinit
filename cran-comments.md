@@ -1,4 +1,4 @@
-Added copyright information.
+Added copyright information as requested after submission of v1.0.0.
 
 ## Test environments
 * local OS X 10.13.3, R 3.4.3
