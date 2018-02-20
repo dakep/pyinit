@@ -10,15 +10,16 @@ pyinit(x, y, intercept = TRUE, delta = 0.5, cc, maxit = 10, psc_keep,
   mscale_rho_fun = c("bisquare", "huber", "gauss"))
 }
 \arguments{
-\item{x}{the data matrix X.}
+\item{x}{a matrix with the data, each observation in a row.}
 
 \item{y}{the response vector.}
 
-\item{intercept}{should an intercept be included in the models. Defaults to
+\item{intercept}{logical, should an intercept be included in the model? Defaults to
 \code{TRUE}.}
 
-\item{delta, cc}{parameters for the M-equation of the scale. If \code{cc} is
-missing it will be set to yield consistency under the Normal model.}
+\item{delta, }{cc parameters for the M-scale estimator equation. If \code{cc} is
+missing it will be set to yield consistency under the Normal model for the
+given \code{delta} (right-hand side of the M-scale equation).}
 
 \item{maxit}{the maximum number of iterations to perform.}
 
@@ -34,14 +35,16 @@ corresponds to the constant \eqn{C_1} from equation (21) in Pena & Yohai
 \item{resid_keep_prop, resid_keep_thresh}{see parameter
 \code{resid_keep_method} for details.}
 
-\item{eps}{the relative tolerance for convergence.}
+\item{eps}{the relative tolerance for convergence. Defaults to \code{1e-8}.}
 
 \item{mscale_maxit}{maximum number of iterations allowed for the M-scale
-algorithm.}
+algorithm. Defaults to \code{200}.}
 
-\item{mscale_tol}{Convergence threshold for the m-scale}
+\item{mscale_tol}{convergence threshold for the m-scale}
 
-\item{mscale_rho_fun}{The rho function to use for the m-scale.}
+\item{mscale_rho_fun}{A string containing the name of the rho 
+function to use for the M-scale. Valid options
+are \code{bisquare}, \code{huber} and \code{gauss}.}
 }
 \value{
 \item{coefficients}{numeric matrix with one coefficient vector per

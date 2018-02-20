@@ -2,12 +2,13 @@
 #'
 #' Computes the PY initial estimates for S-estimates of regression.
 #'
-#' @param x the data matrix X.
+#' @param x a matrix with the data, each observation in a row.
 #' @param y the response vector.
-#' @param intercept should an intercept be included in the models. Defaults to
+#' @param intercept logical, should an intercept be included in the model? Defaults to
 #'      \code{TRUE}.
-#' @param delta,cc parameters for the M-equation of the scale. If \code{cc} is
-#'      missing it will be set to yield consistency under the Normal model.
+#' @param delta, cc parameters for the M-scale estimator equation. If \code{cc} is
+#'      missing it will be set to yield consistency under the Normal model for the
+#'      given \code{delta} (right-hand side of the M-scale equation). 
 #' @param psc_keep proportion of observations to keep based on PSCs.
 #' @param resid_keep_method how to clean the data based on large residuals.
 #'      If \code{"threshold"}, all observations with scaled residuals larger
@@ -16,13 +17,15 @@
 #'      (1999). If \code{"proportion"}, observations with the largest
 #'      \code{resid_keep_prop} residuals will be removed.
 #' @param maxit the maximum number of iterations to perform.
-#' @param eps the relative tolerance for convergence.
+#' @param eps the relative tolerance for convergence. Defaults to \code{1e-8}.
 #' @param resid_keep_prop,resid_keep_thresh see parameter
 #'      \code{resid_keep_method} for details.
 #' @param mscale_maxit maximum number of iterations allowed for the M-scale
-#'      algorithm.
-#' @param mscale_tol Convergence threshold for the m-scale
-#' @param mscale_rho_fun The rho function to use for the m-scale.
+#'      algorithm. Defaults to \code{200}. 
+#' @param mscale_tol convergence threshold for the m-scale
+#' @param mscale_rho_fun A string containing the name of the rho 
+#' function to use for the M-scale. Valid options
+#' are \code{bisquare}, \code{huber} and \code{gauss}. 
 #'
 #' @return
 #' \item{coefficients}{numeric matrix with one coefficient vector per
@@ -52,7 +55,6 @@ pyinit <- function(
     mscale_rho_fun = c("bisquare", "huber", "gauss")
 ) {
     y <- drop(y)
-
     dx <- dim(x)
     dY <- dim(y)
     yl <- length(y)

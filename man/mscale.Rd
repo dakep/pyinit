@@ -10,20 +10,22 @@ mscale(x, delta = 0.5, rho = c("bisquare", "huber", "gauss"), cc,
 \arguments{
 \item{x}{numeric vector.}
 
-\item{delta}{desired value of the M-estimation equation.}
+\item{delta}{desired value for the right-hand side of the M-estimation equation.}
 
-\item{rho}{rho function to use in the M-estimation equation.}
+\item{rho}{rho function to use in the M-estimation equation. Valid options
+are \code{bisquare}, \code{huber} and \code{gauss}.}
 
 \item{cc}{non-negative constant for the chosen rho function. If missing, it will be
 chosen such that the expected value of the rho function under the normal model
 is equal to \code{delta}.}
 
-\item{eps}{threshold for convergence.}
+\item{eps}{threshold for convergence. Defaults to \code{1e-8}.}
 
-\item{maxit}{maximum number of iterations.}
+\item{maxit}{maximum number of iterations. Defaults to \code{200}.}
 }
 \value{
-Numeric vector of length one
+Numeric vector of length one containing the solution \code{s_n} to
+the equation above.
 }
 \description{
 Compute the M-estimate of scale using the MAD as initial estimate.
