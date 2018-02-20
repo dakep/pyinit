@@ -67,6 +67,7 @@
 #'
 #'
 #' @useDynLib pyinit C_initpy
+#' @importFrom stats var
 #' @export
 pyinit <- function(
     x, y,

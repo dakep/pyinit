@@ -1,8 +1,8 @@
 /* confdefs.h */
 #define PACKAGE_NAME "pyinit"
 #define PACKAGE_TARNAME "pyinit"
-#define PACKAGE_VERSION "0.2.5"
-#define PACKAGE_STRING "pyinit 0.2.5"
+#define PACKAGE_VERSION "0.9.99"
+#define PACKAGE_STRING "pyinit 0.9.99"
 #define PACKAGE_BUGREPORT ""
 #define PACKAGE_URL ""
 #define STDC_HEADERS 1
