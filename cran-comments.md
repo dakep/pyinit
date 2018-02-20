@@ -1,4 +1,4 @@
-This is the initial release of the package `pyinit`
+Added copyright information.
 
 ## Test environments
 * local OS X 10.13.3, R 3.4.3
