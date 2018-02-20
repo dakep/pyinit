@@ -1,13 +1,15 @@
 Package: pyinit
 Type: Package
 Title: Pena-Yohai Initial Estimator
-Version: 0.9.99
+Version: 1.0.0
 Date: 2018-02-20
 Author: Gabriela Cohen Freue [aut],
     David Kepplinger [aut],
     Matias Salibian-Barrera [aut]
 Maintainer: David Kepplinger <david.kepplinger@gmail.com>
-Description: Deterministic PY initial estimator for robust S estimators of regression.
+Description: Deterministic Pena-Yohai initial estimator for robust S estimators
+    of regression. The procedure is described in detail in
+    Pena, D., & Yohai, V. (1999) <doi:10.2307/2670164>.
 Imports:
     robustbase
 License: GPL (>= 2)
