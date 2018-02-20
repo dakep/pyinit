@@ -4,6 +4,15 @@
  *
  *  Created by David Kepplinger on 2016-01-30.
  *  Copyright © 2016 David Kepplinger. All rights reserved.
+ *
+ *  Copyright for the rho functions from R package robustbase_0.92-5:
+ *  Peter Rousseeuw and Christophe Croux;
+ *  Valentin Todorov <valentin.todorov@chello.at>,
+ *  Andreas Ruckstuhl <andreas.ruckstuhl@zhaw.ch>,
+ *  Matias Salibian-Barrera <matias@stat.ubc.ca>,
+ *  Tobias Verbeke <tobias.verbeke@openanalytics.eu>,
+ *  Manuel Koller <mkoller@ispm.unibe.ch>,
+ *  Martin Maechler
  */
 
 #include <Rmath.h>
