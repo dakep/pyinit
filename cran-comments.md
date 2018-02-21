@@ -1,4 +1,6 @@
-Added additional copyright information.
+Added missing Copyright holder Ariel Faigon.
+The "# Copyright (C) 1992-1996, 1998-2012 Free Software Foundation, Inc." is automatically generated
+by GNU Autoconf 2.69 and should not require a note in the COPYRIGHTS file.
 
 ## Test environments
 * local OS X 10.13.3, R 3.4.3
