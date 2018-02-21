@@ -1,4 +1,4 @@
-AC_INIT(pyinit, 0.9.99)
+AC_INIT(pyinit, 1.0.2)
 
 : ${R_HOME=`R RHOME`}
 if test -z "${R_HOME}"; then
