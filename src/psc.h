@@ -11,6 +11,8 @@
 
 #include "AuxMemory.h"
 
+#define MAX_NUM_PSCS(numVar) (3 * numVar + 2)
+
 /**
  * Calculate the principal sensitivity components (PSCs)
  *

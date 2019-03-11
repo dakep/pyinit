@@ -10,22 +10,22 @@
 #define Control_h
 
 typedef enum RhoFunctionNameTag {
-    BISQUARE = 0,
-    HUBER = 1,
-    GAUSS_WEIGHT = 2
+    HUBER = 0,
+    BISQUARE = 1,
+    GAUSS = 5
 } RhoFunctionName;
 
 typedef struct ControlTag {
-    const int numIt;
+    const int numit;
     const double eps;
-    const double residThreshold;
-    const double residProportion;
+    const double keepResidThreshold;
+    const double keepResidProportion;
     const double pscProportion;
 
-    const double mscaleB;
-    const double mscaleCC;
-    const int mscaleMaxIt;
-    const double mscaleEPS;
+    const double mscaleDelta;
+    const double mscaleCc;
+    const int mscaleMaxit;
+    const double mscaleEps;
     const RhoFunctionName mscaleRhoFun;
 } Control;
 

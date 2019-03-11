@@ -10,3 +10,5 @@ autoconfig.h
 *.Rproj
 Makevars
 .Rproj.user
+.Rhistory
+

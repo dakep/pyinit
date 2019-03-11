@@ -4,50 +4,86 @@
 \alias{pyinit}
 \title{PY (Pena-Yohai) initial estimates for S-estimates of regression}
 \usage{
-pyinit(X, y, intercept = TRUE, deltaesc = 0.5, cc.scale = 1.54764, prosac,
-  clean.method = c("threshold", "proportion"), C.res, prop, py.nit, en.tol,
-  mscale.maxit = 200, mscale.tol = 1e-08, mscale.rho.fun = c("bisquare",
-  "huber"))
+pyinit(x, y, intercept = TRUE, delta = 0.5, cc, maxit = 10, psc_keep,
+  resid_keep_method = c("threshold", "proportion"), resid_keep_prop,
+  resid_keep_thresh, eps = 1e-08, mscale_maxit = 200, mscale_tol = eps,
+  mscale_rho_fun = c("bisquare", "huber", "gauss"))
 }
 \arguments{
-\item{X}{the data matrix X.}
+\item{x}{a matrix with the data, each observation in a row.}
 
 \item{y}{the response vector.}
 
-\item{intercept}{should an intercept be included in the models. Defaults to \code{TRUE}.}
+\item{intercept}{logical, should an intercept be included in the model? Defaults to
+\code{TRUE}.}
 
-\item{deltaesc, cc.scale}{parameters for the M-equation of the scale. If \code{cc.scale}
-is missing or invalid, it will be chosen such that the expected value of the
-rho function under the normal model is equal to \code{deltaesc}. To specify the
-rho function, see parameter \code{control}.}
+\item{delta, cc}{parameters for the M-scale estimator equation. If \code{cc} is
+missing it will be set to yield consistency under the Normal model for the
+given \code{delta} (right-hand side of the M-scale equation).}
 
-\item{prosac}{the proportion of observations to remove based on PSCs.}
+\item{maxit}{the maximum number of iterations to perform.}
 
-\item{clean.method}{how to clean the data based on large residuals.
-If \code{"threshold"}, all observations with scaled residuals larger than
-\code{C.res} will be removed (\code{C.res} corresponds to the constant
-\eqn{C_1} from equation (21) in Pena & Yohai (1999).
-If \code{"proportion"}, observations with the largest \code{prop} residuals
-will be removed.}
+\item{psc_keep}{proportion of observations to keep based on PSCs.}
 
-\item{C.res, prop}{see parameter \code{clean.method} for details.}
+\item{resid_keep_method}{how to clean the data based on large residuals.
+If \code{"threshold"}, all observations with scaled residuals larger
+than \code{resid_keep_thresh} will be removed (\code{resid_keep_thresh}
+corresponds to the constant \eqn{C_1} from equation (21) in Pena & Yohai
+(1999). If \code{"proportion"}, observations with the largest
+\code{resid_keep_prop} residuals will be removed.}
 
-\item{py.nit}{the maximum number of iterations to perform.}
+\item{resid_keep_prop, resid_keep_thresh}{see parameter
+\code{resid_keep_method} for details.}
 
-\item{en.tol}{the relative tolerance for convergence.}
+\item{eps}{the relative tolerance for convergence. Defaults to \code{1e-8}.}
 
-\item{mscale.maxit}{Maximum number of iterations allowed for the m-scale algorithm.}
+\item{mscale_maxit}{maximum number of iterations allowed for the M-scale
+algorithm. Defaults to \code{200}.}
 
-\item{mscale.tol}{Convergence threshold for the m-scale}
+\item{mscale_tol}{convergence threshold for the m-scale}
 
-\item{mscale.rho.fun}{The rho function to use for the m-scale.}
+\item{mscale_rho_fun}{A string containing the name of the rho
+function to use for the M-scale. Valid options
+are \code{bisquare}, \code{huber} and \code{gauss}.}
 }
 \value{
-\item{initCoef}{A numeric matrix with one initial coefficient per column}
-        \item{objF}{A vector of values of the objective function for the respective coefficient}
+\item{coefficients}{numeric matrix with coefficient vectors in columns. These
+are regression estimators based on "cleaned" subsets of the data. The
+M-scales of the corresponding residuals are returned in the entry
+\code{objective}. The regression coefficients with smallest estimated
+residual scale is in the first column, but the others need not be ordered.}
+\item{objective}{vector of values of the M-scale estimate of the residuals
+associated with each vector of regression coefficients in the columns of
+\code{coefficients}.}
 }
 \description{
 Computes the PY initial estimates for S-estimates of regression.
+}
+\examples{
+# generate a simple synthetic data set for a linear regression model
+# with true regression coefficients all equal to one "(1, 1, 1, 1, 1)"
+set.seed(123)
+x <- matrix(rnorm(100*4), 100, 4)
+y <- rnorm(100) + rowSums(x) + 1
+# add masked outliers
+a <- svd(var(x))$v[,4]
+x <- rbind(x, t(outer(a, rnorm(20, mean=4, sd=1))))
+y <- c(y, rnorm(20, mean=-2, sd=.2))
+
+# these outliers are difficult to find
+plot(lm(y~x), ask=FALSE)
+
+# use pyinit to obtain estimated regression coefficients
+tmp <- pyinit(x=x, y=y, resid_keep_method='proportion', psc_keep = .5, resid_keep_prop=.5)
+# the vector of regression coefficients with smallest residuals scale
+# is returned in the first column of the "coefficients" element
+tmp$coefficients[,1]
+# compare that with the LS estimator on the clean data
+coef(lm(y~x, subset=1:100))
+# compare it with the LS estimator on the full data
+coef(lm(y~x))
+
+
 }
 \references{
 Pena, D., & Yohai, V.. (1999). A Fast Procedure for Outlier Diagnostics in Large

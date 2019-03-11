@@ -1,0 +1,11 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^cran-comments\.md$
+^build$
+^run-checks$
+^bundle$
+^builds.*$
+^.*Makevars\.dbg$
+^examples.*$
+^TODO$
+

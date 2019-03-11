@@ -1,4 +1,4 @@
-AC_INIT(pyinit, version-1.0)
+AC_INIT(pyinit, 1.0.2)
 
 : ${R_HOME=`R RHOME`}
 if test -z "${R_HOME}"; then
@@ -6,16 +6,12 @@ if test -z "${R_HOME}"; then
   exit 1
 fi
 
-CC=`"${R_HOME}/bin/R" CMD config CC`
-CPP=`"${R_HOME}/bin/R" CMD config CPP`
-CXX=`"${R_HOME}/bin/R" CMD config CXX`
-CXXCPP=`"${R_HOME}/bin/R" CMD config CXXCPP`
-CXXFLAGS=`"${R_HOME}/bin/R" CMD config CXXFLAGS`
-CPPFLAGS=`"${R_HOME}/bin/R" CMD config CPPFLAGS`
+RBIN="${R_HOME}/bin/R"
+CC=`"${RBIN}" CMD config CC`
+CPP=`"${RBIN}" CMD config CPP`
 
 AC_PROG_CC
 AC_PROG_CPP
-AC_PROG_CXX
 
 ####################################################################################################
 ##
