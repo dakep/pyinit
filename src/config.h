@@ -9,19 +9,10 @@
 #ifndef pyinit_config_h
 #define pyinit_config_h
 
-#include "autoconfig.h"
-
-#ifdef HAVE_INTTYPES_H
-#   include <inttypes.h>
-#endif
-
-#ifdef HAVE_STDINT_H
-#   include <stdint.h>
-#endif
+#include <inttypes.h>
+#include <stdint.h>
 
 #define NUMERIC_EPS 1e-16
 #define LAPACK_EV_MIN 1e-12
 
 #endif
-
-
