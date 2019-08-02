@@ -214,13 +214,16 @@ int computePYEstimator(const double *restrict Xtr, const double *restrict y,
         }
 
         /*
-         * Check if we converged to an best coef estimate
+         * If iter > 0, compute the difference between the new best coefficient estimate and the previously
+         * best coefficient estimate.
          */
-        diff = 0;
-        normBest = 0;
-        for (j = 0; j < nvar; ++j) {
-            diff += fabs(bestCoefEst[j] - estimates[j]);
-            normBest += fabs(bestCoefEst[j]);
+        if (iter > 0) {
+            diff = 0;
+            normBest = 0;
+            for (j = 0; j < nvar; ++j) {
+                diff += fabs(bestCoefEst[j] - estimates[j]);
+                normBest += fabs(bestCoefEst[j]);
+            }
         }
 
         /* 5. Store best estimate for later at the beginning of estimates */
@@ -229,9 +232,9 @@ int computePYEstimator(const double *restrict Xtr, const double *restrict y,
         currentEst = estimates + nvar;
 
         /*
-         * Check if we reached the maximum number of iterations
+         * Check if the difference is negligible or we reached the maximum number of iterations.
          */
-        if ((++iter >= ctrl->numit) || (diff < ctrl->eps * normPrevBest)) {
+        if (iter++ > 0 && ((diff < ctrl->eps * normPrevBest) || (iter >= ctrl->numit))) {
             break;
         }
 
