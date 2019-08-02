@@ -4,7 +4,7 @@ Fixed issue in `pyinit` with exact fits and addressed valgrind error reported in
 * local OS X 10.14.6, R 3.6.1
 * win-builder (devel and release)
 * Rhub
-  * Debian Linux, R-release, GCC
+  * Debian Linux, R-release, GCC (with valgrind)
   * Debian Linux, R-devel, GCC ASAN/UBSAN
   * Fedora Linux, R-devel, GCC
   * Fedora Linux, R-devel, clang, gfortran
