@@ -1,7 +1,7 @@
-Fixed issue in `pyinit` with exact fits.
+Fixed issue in `pyinit` with exact fits and addressed valgrind error reported in the R checks.
 
 ## Test environments
-* local OS X 10.14.6, R 3.6.0
+* local OS X 10.14.6, R 3.6.1
 * win-builder (devel and release)
 * Rhub
   * Debian Linux, R-release, GCC
