@@ -20,6 +20,7 @@
 #include <string.h>
 #include <float.h>
 
+#include "config.h"
 #include "mscale.h"
 #include "PartialSort.h"
 
@@ -52,8 +53,9 @@ RhoFunction getRhoFunctionByName(RhoFunctionName name)
 double mscale(const double * x, const int n, const double b, const double eps, const int maxIt,
               RhoFunction rho, const double cc)
 {
-    int medianPos = (n / 2);
-    int takeAvgForMedian = (n % 2);
+    const int nm1 = n - 1;
+    int medianPos = nm1 / 2;
+    int takeAvgForMedian = nm1 % 2;
     double scale;
     double tmpScale;
     double rhoSum;
@@ -69,15 +71,37 @@ double mscale(const double * x, const int n, const double b, const double eps, c
     memcpy(xcpy, x, n * sizeof(double));
     xcpy[n] = DBL_MAX;
 
-    partialQsort(xcpy, 0, medianPos + 2, n - 1, absoluteLessThan);
+    partialQsort(xcpy, 0, medianPos + 2, nm1, absoluteLessThan);
 
     scale = fabs(xcpy[medianPos]);
 
-    if (takeAvgForMedian == 0) {
-        scale = 0.5 * (scale + fabs(xcpy[medianPos - 1]));
+    if (takeAvgForMedian > 0) {
+        scale = 0.5 * (scale + fabs(xcpy[medianPos + 1]));
     }
 
     scale *= MAD_SCALE_CONSTANT;  /* == MAD */
+
+    if (scale < eps) {
+        // The MAD is zero and can not be used as an initializer if b < 0.5 or b == 0
+        const int b_prop = (1 - b) * n;
+        if (b_prop <= medianPos || b_prop > nm1) {
+          // if `b` is ~0.5 or 0, a MAD of zero implies an M-scale of 0.
+          return 0;
+        } else {
+          // Sort the remaining values, and take the average of the non-zero values.
+          partialQsort(xcpy, medianPos, b_prop + 1, nm1, absoluteLessThan);
+          scale = 0;
+          for (int i = medianPos + 1; i < b_prop + 1; ++i) {
+              scale += xcpy[i] * xcpy[i];
+          }
+          scale = sqrt(scale / (b_prop - medianPos));
+        }
+
+        if (scale < eps) {
+            // The initial scale is still 0. Return 0.
+            return 0;
+        }
+    }
 
     /*
      * Start iterations
@@ -93,9 +117,14 @@ double mscale(const double * x, const int n, const double b, const double eps, c
         tmpScale = scale * sqrt(rhoSum * rhoDenomInv);
         err = fabs(tmpScale / scale - 1);
         scale = tmpScale;
-    } while ((++it < maxIt) && (err > eps));
+    } while ((++it < maxIt) && (err > eps) && (scale > eps));
 
     free(xcpy);
+
+    if (scale < eps) {
+        // The scale is essentially 0.
+        return 0;
+    }
 
     return scale;
 }
