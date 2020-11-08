@@ -141,6 +141,7 @@ int computePYEstimator(const double *restrict Xtr, const double *restrict y,
                     bestCoefEst = currentEst;
                 }
             } else {
+                *tmpObjective = 0;
                 memset(currentEst, 0, nvar * sizeof(double));
             }
             ++tmpObjective;
@@ -172,6 +173,7 @@ int computePYEstimator(const double *restrict Xtr, const double *restrict y,
                     bestCoefEst = currentEst;
                 }
             } else {
+                *tmpObjective = 0;
                 memset(currentEst, 0, nvar * sizeof(double));
             }
             ++tmpObjective;
@@ -204,6 +206,7 @@ int computePYEstimator(const double *restrict Xtr, const double *restrict y,
                     bestCoefEst = currentEst;
                 }
             } else {
+                *tmpObjective = 0;
                 memset(currentEst, 0, nvar * sizeof(double));
             }
             ++tmpObjective;

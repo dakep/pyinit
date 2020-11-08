@@ -3,6 +3,9 @@
 ^\.Rproj\.user$
 ^cran-comments\.md$
 ^build$
+^README\.Rmd$
+^README\.md$
+^\.travis\.yml$
 ^run-checks$
 ^bundle$
 ^builds.*$
