@@ -5,7 +5,7 @@
 
 [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/pyinit)](https://CRAN.R-project.org/package=pyinit)
 [![Build
-Status](https://travis-ci.com/dakep/pyinit.svg?branch=release/v1.0.4)](https://travis-ci.com/dakep/pyinit)
+Status](https://travis-ci.com/dakep/pyinit.svg?branch=main)](https://travis-ci.com/dakep/pyinit)
 <!-- end badges -->
 
 # R package *pyinit*
