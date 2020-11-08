@@ -5,6 +5,8 @@ r:
 warnings_are_errors: true
 r_packages:
 - rmarkdown
+os: linux
+dist: xenial
 
 env:
   global:
@@ -15,14 +17,13 @@ env:
 branches:
   only:
   - main
-  - develop
   - "/^release\\/.+$/"
 
 stages:
 - name: Check
   if: commit_message != "Re-build README.Rmd"
 - name: "Extended checks"
-  if: commit_message != "Re-build README.Rmd" AND branch =~ /^release\\/.+$/
+  if: branch != main AND commit_message != "Re-build README.Rmd"
 
 jobs:
 - stage: Check
