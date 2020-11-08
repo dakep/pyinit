@@ -17,14 +17,13 @@ env:
 branches:
   only:
   - main
-  - develop
   - "/^release\\/.+$/"
 
 stages:
 - name: Check
   if: commit_message != "Re-build README.Rmd"
 - name: "Extended checks"
-  if: branch =~ "/^release\\/.+$/" AND commit_message != "Re-build README.Rmd"
+  if: branch != main AND commit_message != "Re-build README.Rmd"
 
 jobs:
 - stage: Check
