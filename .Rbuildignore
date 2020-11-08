@@ -1,10 +1,11 @@
 ^.*\.Rproj$
 ^.*\.vscode$
+^\.github$
 ^\.Rproj\.user$
 ^cran-comments\.md$
+^CRAN-RELEASE$
 ^build$
-^README\.Rmd$
-^README\.md$
+^README\.R?md$
 ^\.travis\.yml$
 ^run-checks$
 ^bundle$
