@@ -8,7 +8,6 @@ build
 bundle
 autoconfig.h
 *.Rproj
-Makevars
 .Rproj.user
 .Rhistory
-
+.vscode

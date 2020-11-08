@@ -1,0 +1,30 @@
+---
+output: github_document
+---
+```{r setup, echo=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = '#>')
+```
+
+# pense R package
+
+<!-- begin badges -->
+[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/pyinit)](https://CRAN.R-project.org/package=pyinit)
+```{r, results='asis', echo=FALSE, eval=TRUE}
+branch_name <- Sys.getenv('GIT_BRANCH', '')
+if (nchar(branch_name) == 0L) {
+  branch_name <- tryCatch(system('git rev-parse --abbrev-ref HEAD', intern = TRUE),
+                          error = function (e) { warning("error: ", as.character(e));  return('master') },
+                          warning = function (w) { warning("warning: ", as.character(w)); return('master') })
+}
+cat(sprintf('[![Build Status](https://travis-ci.com/dakep/pyinit.svg?branch=%s)](https://travis-ci.com/dakep/pyinit)',
+            branch_name))
+```
+<!-- end badges -->
+
+# R package _pyinit_
+
+An R package implementing the Pena-Yohai strategy (Pena & Yohai, 1999) to obtain initial estimators for robust S-Estimators of Regression.
+
+## References
+Pena, D., & Yohai, V.. (1999). A Fast Procedure for Outlier Diagnostics in Large Regression Problems.
+_Journal of the American Statistical Association_, 94(446), 434-445. (http://doi.org/10.2307/2670164)
