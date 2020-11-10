@@ -270,7 +270,7 @@ int computePYEstimator(const double *restrict Xtr, const double *restrict y,
     free(filteredY);
 
     if (linalgError != 0) {
-        Rf_error("There was an error in one of the calls to LINPACK (%d)", linalgError);
+        Rf_error("There was an error in one of the calls to LAPACK (%d)", linalgError);
     }
 
     return numEsts;
