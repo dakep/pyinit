@@ -87,7 +87,7 @@ int computePYEstimator(const double *restrict Xtr, const double *restrict y,
 
         /* 1. Estimate coefficients for the residuales filtered data (currentXtr) */
         compCoefsStatus = computeOLSCoefs(filteredXtr, filteredY, currentNobs, nvar, currentEst,
-                                          &auxmem);
+                                          &auxmem, 1);
         linalgError = auxmem.intWorkMem[0];
         if (linalgError != 0) {
             break;
@@ -126,7 +126,7 @@ int computePYEstimator(const double *restrict Xtr, const double *restrict y,
             currentEst += nvar;
             if (filteredNobs > 0) {
                 compCoefsStatus = computeOLSCoefs(filteredXtr, filteredY, filteredNobs, nvar,
-                                                  currentEst, &auxmem);
+                                                  currentEst, &auxmem, 0);
             } else {
                 compCoefsStatus = OLS_COEFFICIENTS_ERROR;
             }
@@ -158,7 +158,7 @@ int computePYEstimator(const double *restrict Xtr, const double *restrict y,
             currentEst += nvar;
             if (filteredNobs > 0) {
                 compCoefsStatus = computeOLSCoefs(filteredXtr, filteredY, filteredNobs, nvar,
-                                                  currentEst, &auxmem);
+                                                  currentEst, &auxmem, 0);
             } else {
                 compCoefsStatus = OLS_COEFFICIENTS_ERROR;
             }
@@ -191,7 +191,7 @@ int computePYEstimator(const double *restrict Xtr, const double *restrict y,
             currentEst += nvar;
             if (filteredNobs > 0) {
                 compCoefsStatus = computeOLSCoefs(filteredXtr, filteredY, filteredNobs, nvar,
-                                                  currentEst, &auxmem);
+                                                  currentEst, &auxmem, 0);
             } else {
                 compCoefsStatus = OLS_COEFFICIENTS_ERROR;
             }

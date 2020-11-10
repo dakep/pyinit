@@ -1,3 +1,9 @@
+# Version 1.0.4-100:
+  * Fix numerical issue when using ATLAS BLAS libraries for CHOL decomposition.
+    Manually check an approximation to the condition number to determine if the OLS
+    coefficients can be computed.
+
+
 # Version 1.0.4:
   * Fix issues with uninitialized memory if OLS coefficients cannot be computed.
 

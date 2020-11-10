@@ -26,6 +26,8 @@ extern "C" {
  * If the system is rank-deficient, a slow SVD is used instead and `Xsqrt` will
  * be used to store the Moore-Penrose pseudo-inverse of (t(X) . X)^1/2
  *
+ * @param useSvdFallback if > 0, compute a pseudo-inverse to get the coefficients, otherwise return an error code.
+ *
  * @return 0 ... coefficients have been computed. Cholesky decomposition is stored in Xsqrt
  *         1 ... coefficients have been computed. Xsqrt holds the Moore-Penrose pseudo inverse
  *               of (t(X) . X)^1/2
@@ -34,7 +36,7 @@ extern "C" {
  */
 int computeOLSCoefs(const double *restrict Xtr, const double *restrict y,
 					const int nobs, const int nvar,
-					double *restrict coefs, AuxMemory *auxmem);
+					double *restrict coefs, AuxMemory *auxmem, const int useSvdFallback);
 
 /**
  * Compute residuals for linear regression given the coefficients and the data

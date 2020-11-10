@@ -19,14 +19,18 @@ static const double BLAS_0F = 0.0;
 static const double BLAS_1F = 1.0;
 static const double BLAS_M1F = -1.0;
 
+static const double kMinConditionNr = 1e-8;
+
 static BLAS_CHAR BLAS_UPLO_UPPER = "U";
 static BLAS_CHAR BLAS_TRANS_NO = "N";
 static BLAS_CHAR BLAS_TRANS_TRANS = "T";
 static BLAS_CHAR BLAS_DIAG_NO = "N";
 
+static double approxSqrtConditionNr(const double *restrict chol, int ncol);
+
 int computeOLSCoefs(const double *restrict Xtr, const double *restrict y,
                     const int nobs, const int nvar,
-					double *restrict coefs, AuxMemory *auxmem)
+					double *restrict coefs, AuxMemory *auxmem, const int useSvdFallback)
 {
     int lapackInfo, retVal = OLS_COEFFICIENTS_OKAY;
 
@@ -44,6 +48,11 @@ int computeOLSCoefs(const double *restrict Xtr, const double *restrict y,
 
     auxmem->isXsqrtInverted = 0;
 
+    /* Check if the system is ill-conditioned */
+    if (approxSqrtConditionNr(auxmem->Xsqrt, nvar) < kMinConditionNr) {
+        lapackInfo = 1;
+    }
+
     if (lapackInfo == 0) {
         /* coefEst = inv(t(chol(Xsqrt))) %*% coefEst */
         BLAS_DTRSV(BLAS_UPLO_UPPER, BLAS_TRANS_TRANS, BLAS_DIAG_NO, nvar, auxmem->Xsqrt, nvar, coefs,
@@ -52,7 +61,7 @@ int computeOLSCoefs(const double *restrict Xtr, const double *restrict y,
         /* coefEst = inv(chol(Xsqrt)) %*% coefEst */
         BLAS_DTRSV(BLAS_UPLO_UPPER, BLAS_TRANS_NO, BLAS_DIAG_NO, nvar, auxmem->Xsqrt, nvar, coefs,
                    BLAS_1L);
-    } else if (lapackInfo > 0) {
+    } else if (useSvdFallback > 0 && lapackInfo > 0) {
         /* Handle rank-deficient model here: Compute inv(Xsqrt) by EVD */
         int nevalues = 0, i, j;
         double *restrict workPtr;
@@ -118,7 +127,6 @@ int computeOLSCoefs(const double *restrict Xtr, const double *restrict y,
     return retVal;
 }
 
-
 void computeResiduals(const double *restrict Xtr, const double *restrict y,
 					  const int nobs, const int nvar,
 					  const double *restrict coefs, double *restrict residuals)
@@ -131,3 +139,20 @@ void computeResiduals(const double *restrict Xtr, const double *restrict y,
                BLAS_1F, residuals, BLAS_1L);
 }
 
+static double approxSqrtConditionNr(const double *restrict chol, const int ncol) {
+    double max = chol[0];
+    double min = chol[0];
+    const int ncells = ncol * ncol;
+    for (int i = ncol; i < ncells; i += ncol) {
+        ++i;
+        if (chol[i] > max) {
+            max = chol[i];
+        } else if (chol[i] < min) {
+            min = chol[i];
+        }
+    }
+    if (min < 0 || max < 0) {
+        return 0;
+    }
+    return min / max;
+}
