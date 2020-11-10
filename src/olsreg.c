@@ -49,7 +49,7 @@ int computeOLSCoefs(const double *restrict Xtr, const double *restrict y,
     auxmem->isXsqrtInverted = 0;
 
     /* Check if the system is ill-conditioned */
-    if (approxSqrtConditionNr(auxmem->Xsqrt, nvar) < kMinConditionNr) {
+    if (lapackInfo == 0 && approxSqrtConditionNr(auxmem->Xsqrt, nvar) < kMinConditionNr) {
         lapackInfo = 1;
     }
 
