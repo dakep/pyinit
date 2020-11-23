@@ -86,6 +86,7 @@ double mscale(const double * x, const int n, const double b, const double eps, c
         const int b_prop = (1 - b) * n;
         if (b_prop <= medianPos || b_prop > nm1) {
           // if `b` is ~0.5 or 0, a MAD of zero implies an M-scale of 0.
+          free(xcpy);
           return 0;
         } else {
           // Sort the remaining values, and take the average of the non-zero values.
@@ -99,6 +100,7 @@ double mscale(const double * x, const int n, const double b, const double eps, c
 
         if (scale < eps) {
             // The initial scale is still 0. Return 0.
+            free(xcpy);
             return 0;
         }
     }

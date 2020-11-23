@@ -112,10 +112,10 @@ int computeOLSCoefs(const double *restrict Xtr, const double *restrict y,
             memcpy(auxmem->Xsqrt, tmpXsqrtInv, nvar * nvar * sizeof(double));
 
             auxmem->isXsqrtInverted = 1;
-            free(tmpXsqrtInv);
         } else {
             lapackInfo = auxmem->intWorkMem[0];
         }
+        free(tmpXsqrtInv);
     }
 
     if (lapackInfo != 0) {
