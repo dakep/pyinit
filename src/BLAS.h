@@ -60,10 +60,14 @@ F77_NAME(dtrsm)(const char *side, const char *uplo,
 #define LAPACK_DPOTRF(uplo, n, a, lda, info)                                                    \
     F77_NAME(dpotrf)(uplo, &n, a, &lda, &info)
 
+/*
+ * Note that parameters LI and LU in DSYEVR_ are not referenced, but nevertheless must be valid
+ * references to avoid a segfault on Solaris. Using a reference to parameter `n` as placeholder.
+ */
 #define LAPACK_DSYEVR_RANGE(uplo, n, a, lda, rangeLower, rangeUpper, abstol, nevalues,          \
                             evalues, evectors, ldevectors, isuppevectors, work, lwork, iwork,   \
                             liwork, info)                                                       \
-    F77_NAME(dsyevr)("V", "V", uplo, &n, a, &lda, &rangeLower, &rangeUpper, &info, &info,       \
+    F77_NAME(dsyevr)("V", "V", uplo, &n, a, &lda, &rangeLower, &rangeUpper, &n, &n,             \
                      &abstol, &nevalues, evalues, evectors, &ldevectors, isuppevectors, work,   \
                      &lwork, iwork, &liwork, &info)
 
