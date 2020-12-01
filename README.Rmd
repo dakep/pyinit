@@ -5,7 +5,7 @@ output: github_document
 knitr::opts_chunk$set(collapse = TRUE, comment = '#>')
 ```
 
-# pense R package
+# R package _pyinit_
 
 <!-- begin badges -->
 [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/pyinit)](https://CRAN.R-project.org/package=pyinit)
@@ -21,7 +21,6 @@ cat(sprintf('[![Build Status](https://travis-ci.com/dakep/pyinit.svg?branch=%s)]
 ```
 <!-- end badges -->
 
-# R package _pyinit_
 
 An R package implementing the Pena-Yohai strategy (Pena & Yohai, 1999) to obtain initial estimators for robust S-Estimators of Regression.
 
