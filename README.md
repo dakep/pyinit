@@ -1,5 +1,5 @@
 
-# pense R package
+# R package *pyinit*
 
 <!-- begin badges -->
 
@@ -7,8 +7,6 @@
 [![Build
 Status](https://travis-ci.com/dakep/pyinit.svg?branch=main)](https://travis-ci.com/dakep/pyinit)
 <!-- end badges -->
-
-# R package *pyinit*
 
 An R package implementing the Pena-Yohai strategy (Pena & Yohai, 1999)
 to obtain initial estimators for robust S-Estimators of Regression.
