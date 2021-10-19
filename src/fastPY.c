@@ -9,6 +9,7 @@
 #include <Rmath.h>
 #include <stdlib.h>
 #include <float.h>
+#include <R_ext/Error.h>
 
 #include "fastPY.h"
 
