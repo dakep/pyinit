@@ -5,7 +5,7 @@
 
 [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/pyinit)](https://CRAN.R-project.org/package=pyinit)
 [![Build
-Status](https://travis-ci.com/dakep/pyinit.svg?branch=main)](https://travis-ci.com/dakep/pyinit)
+Status](https://travis-ci.com/dakep/pyinit.svg?branch=release/1.1.2)](https://travis-ci.com/dakep/pyinit)
 <!-- end badges -->
 
 An R package implementing the Pena-Yohai strategy (Pena & Yohai, 1999)
