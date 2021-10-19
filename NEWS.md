@@ -1,6 +1,7 @@
 # Version 1.1.2:
   * Fix C code to import `<R_ext/Error.h>` manually. 
     Thanks to Prof. Ripley for providing the fix alongside the error report.
+  * Address implicit conversion warnings on M1 macs by making the conversions explicit.
 
 # Version 1.1.1:
   * Estimates from ill-conditioned subsets of the data are not returned anymore.
