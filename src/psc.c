@@ -114,7 +114,7 @@ int calculatePSCs(double *restrict pscs, AuxMemory* auxmem,
                    BLAS_1F, auxmem->XsqrtInvX, nvar, auxmem->eigenvectors, nvar,
                    BLAS_0F, pscs, nobs);
     } else if (nevalues < 0) {
-        auxmem->intWorkMem[0] = auxmem->evalues[0];
+        auxmem->intWorkMem[0] = (int) auxmem->evalues[0];
     }
 
     return nevalues;

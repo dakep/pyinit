@@ -83,7 +83,7 @@ double mscale(const double * x, const int n, const double b, const double eps, c
 
     if (scale < eps) {
         // The MAD is zero and can not be used as an initializer if b < 0.5 or b == 0
-        const int b_prop = (1 - b) * n;
+        const int b_prop = (int) ((1 - b) * n);
         if (b_prop <= medianPos || b_prop > nm1) {
           // if `b` is ~0.5 or 0, a MAD of zero implies an M-scale of 0.
           free(xcpy);
