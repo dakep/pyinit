@@ -6,6 +6,8 @@
  *  Copyright © 2016 David Kepplinger. All rights reserved.
  */
 
+#include "BLAS.h"  /* must come first! */
+
 #include <Rmath.h>
 #include <stdlib.h>
 #include <float.h>
@@ -13,7 +15,6 @@
 
 #include "fastPY.h"
 
-#include "BLAS.h"
 #include "Control.h"
 #include "mscale.h"
 #include "PartialSort.h"

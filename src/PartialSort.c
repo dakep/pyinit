@@ -7,6 +7,8 @@
  *  The partial quicksort algorithm is (C) Copyright by Ariel Faigon, 1987
  */
 
+#include "BLAS.h"  /* must come first! */
+
 #include <Rmath.h>
 #include <stdlib.h>
 #include <string.h>

@@ -6,10 +6,11 @@
  *  Copyright © 2016 David Kepplinger. All rights reserved.
  */
 
+#include "BLAS.h"  /* must come first! */
+
 #include <float.h>
 #include <stdlib.h>
 
-#include "BLAS.h"
 #include "olsreg.h"
 #include "config.h"
 #include "psc.h"

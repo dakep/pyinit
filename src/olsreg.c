@@ -6,12 +6,13 @@
  *  Copyright © 2016 David Kepplinger. All rights reserved.
  */
 
+#include "BLAS.h"  /* must come first! */
+
 #include <string.h>
 #include <Rmath.h>
 #include <stdlib.h>
 
 #include "olsreg.h"
-#include "BLAS.h"
 #include "evd.h"
 
 static BLAS_INT BLAS_1L = 1;
