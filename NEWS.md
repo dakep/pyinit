@@ -1,3 +1,6 @@
+# Version 1.1.3:
+  * Update BLAS includes to fix errors with calls to Fortran routines.
+
 # Version 1.1.2:
   * Fix C code to import `<R_ext/Error.h>` manually. 
     Thanks to Prof. Ripley for providing the fix alongside the error report.

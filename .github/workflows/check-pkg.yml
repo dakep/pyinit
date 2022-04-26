@@ -23,6 +23,7 @@ jobs:
       matrix:
         config:
           - {os: macos-latest,   r: 'release'}
+          - {os: macos-latest,   r: 'devel'}
 
           - {os: windows-latest, r: 'devel', rtools-version: '42'}
           - {os: windows-latest, r: 'release'}
