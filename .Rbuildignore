@@ -13,4 +13,4 @@
 ^.*Makevars\.dbg$
 ^examples.*$
 ^TODO$
-
+^CRAN-SUBMISSION$

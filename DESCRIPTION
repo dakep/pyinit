@@ -7,16 +7,16 @@ Encoding: UTF-8
 Authors@R: c(
     person("David", "Kepplinger", , "david.kepplinger@gmail.com",
         role = c("aut", "cre")),
-    person("Matias", "Salibian-Barrera", role = c("aut")),
+    person("Matias", "Salibian-Barrera", role = "aut"),
     person("Gabriela", "Cohen Freue", role = "aut"))
-Maintainer: David Kepplinger <david.kepplinger@gmail.com>
 Description: Deterministic Pena-Yohai initial estimator for robust S estimators
     of regression. The procedure is described in detail in
     Pena, D., & Yohai, V. (1999) <doi:10.2307/2670164>.
 Imports:
     robustbase
 Suggests:
-    testthat
+    testthat,
+    digest
 License: GPL (>= 2)
 URL: https://github.com/dakep/pyinit
 BugReports: https://github.com/dakep/pyinit/issues
@@ -24,4 +24,4 @@ NeedsCompilation: yes
 Biarch: true
 Copyright: See the file COPYRIGHTS for copyright details on some of the
     functions.
-RoxygenNote: 7.1.2
+RoxygenNote: 7.3.3

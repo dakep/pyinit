@@ -16,8 +16,8 @@ if (nchar(branch_name) == 0L) {
                           error = function (e) { warning("error: ", as.character(e));  return('master') },
                           warning = function (w) { warning("warning: ", as.character(w)); return('master') })
 }
-cat(sprintf('[![Build Status](https://www.travis-ci.com/github/dakep/pyinit.svg?branch=%s)](https://travis-ci.com/dakep/pyinit)',
-            branch_name))
+#cat(sprintf('[![Build Status](https://www.travis-ci.com/github/dakep/pyinit.svg?branch=%s)](https://travis-ci.com/dakep/pyinit)',
+#            branch_name))
 ```
 <!-- end badges -->
 
