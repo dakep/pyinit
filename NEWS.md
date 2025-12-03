@@ -1,3 +1,6 @@
+# Version 1.1.4:
+  * Maintainance release to address updates in testthat 3.3.0
+
 # Version 1.1.3:
   * Update BLAS includes to fix errors with calls to Fortran routines.
 
